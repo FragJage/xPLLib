@@ -20,7 +20,6 @@
 /***************************************************************************************************/
 
 #include <iostream>
-#include "SimpleFolders/SimpleFolders.h"
 #include "xPLDevice.h"
 #include "Schemas/SchemaConfig.h"
 
@@ -41,12 +40,12 @@ xPLDevice::xPLDevice()
 
 xPLDevice::xPLDevice(const string& vendor, const string& device)
 {
-	 Initialisation(vendor, device, "default");
+    Initialisation(vendor, device, "default");
 }
 
 xPLDevice::xPLDevice(const string& vendor, const string& device, const string& instance)
 {
-	 Initialisation(vendor, device, instance);
+    Initialisation(vendor, device, instance);
 }
 
 void xPLDevice::Initialisation(const std::string& vendor, const std::string& device, const std::string& instance)
@@ -55,11 +54,21 @@ void xPLDevice::Initialisation(const std::string& vendor, const std::string& dev
 
 
     m_bAnswerAllMsg = false;
-    m_bLoadConfig = false;
-    m_logFile = "";
-    m_Log = &m_SimpleLog;
-    m_SimpleLog.SetFilter(&m_logFilter);
-    m_SimpleLog.SetWriter(&m_logWriter);
+
+    #ifndef XPLLIB_NOCONF
+      m_bLoadConfig = false;
+      m_ConfigFile = "";
+      m_HBeatType = ConfigAPP;
+    #else
+      m_HBeatType = HeartBeatAPP;
+    #endif
+
+    #ifndef XPLLIB_NOLOG
+      m_logFile = "";
+      m_Log = &m_SimpleLog;
+      m_SimpleLog.SetFilter(&m_logFilter);
+      m_SimpleLog.SetWriter(&m_logWriter);
+    #endif
 
     LOG_ENTER;
 
@@ -78,10 +87,8 @@ void xPLDevice::Initialisation(const std::string& vendor, const std::string& dev
 
         LOG_INFO(m_Log) << "Source : " << m_Source.ToString();
     }
-	m_HBeatMsg = nullptr;
-    m_HBeatType = ConfigAPP;
+  	m_HBeatMsg = nullptr;
     m_HBeatInterval = 5;
-    m_ConfigFile = "";
 
 	LOG_EXIT_OK;
 }
@@ -96,25 +103,10 @@ void xPLDevice::AddExtension(IExtension* extensionClass)
     m_ExtensionClass.push_back(extensionClass);
 }
 
-void xPLDevice::AddExtension(IExtensionConfig* extensionClass)
-{
-    m_ExtensionConfigClass.push_back(extensionClass);
-}
-
-SimpleLog* xPLDevice::GetLogHandle()
-{
-    return m_Log;
-}
-
 void xPLDevice::SetAppName(const string& appName, const string& appVersion)
 {
     m_AppName = appName;
     m_AppVersion = appVersion;
-}
-
-void xPLDevice::SetNetworkInterface(const std::string& networkInterface)
-{
-    m_networkInterface = networkInterface;
 }
 
 void xPLDevice::SetInstance(const string& instance)
@@ -165,6 +157,12 @@ xPLDevice::HeartBeatType xPLDevice::GetHeartBeatType()
     return m_HBeatType;
 }
 
+#ifndef XPLLIB_NOLOG
+SimpleLog* xPLDevice::GetLogHandle()
+{
+    return m_Log;
+}
+
 void xPLDevice::SetLogLevel(int level)
 {
     LOG_VERBOSE(m_Log) << "Log Level is set to " << level;
@@ -212,6 +210,7 @@ void xPLDevice::SetLogDestination(const std::string& value)
     }
     m_logFile = value;
 }
+#endif
 
 void xPLDevice::SetGroups(const std::vector<std::string>& group)
 {
@@ -285,6 +284,12 @@ void xPLDevice::SetHeartBeat(HeartBeatType type, int interval)
     if(m_AppVersion != "") m_HBeatMsg->AddValue("version", m_AppVersion);
 
     LOG_EXIT_OK;
+}
+
+#ifndef XPLLIB_SOCK
+void xPLDevice::SetNetworkInterface(const std::string& networkInterface)
+{
+    m_networkInterface = networkInterface;
 }
 
 unsigned short xPLDevice::GetTCPPort()
@@ -376,7 +381,6 @@ void xPLDevice::SendMessage(ISchema *Schema, const string& target)
 void xPLDevice::SendHeartBeat()
 {
     time_t timeNow;
-    static time_t timeLast=0;
     int interval;
 
 	//LOG_ENTER;
@@ -386,9 +390,9 @@ void xPLDevice::SendHeartBeat()
         interval = m_HBeatInterval*60;
 
     timeNow = time((time_t*)0);
-    if((timeNow-timeLast>=interval)||(timeLast==0))
+    if((timeNow-m_LastHBeat>=interval)||(m_LastHBeat==0))
     {
- 		timeLast=timeNow;
+ 		m_LastHBeat=timeNow;
         SendMessage(m_HBeatMsg, "*");
 	}
 
@@ -448,11 +452,6 @@ void xPLDevice::Close()
     LOG_EXIT_OK;
 }
 
-void xPLDevice::SetAnswerAllMsg(bool bAnswerAllMsg)
-{
-    m_bAnswerAllMsg = bAnswerAllMsg;
-}
-
 bool xPLDevice::WaitRecv(int delay)
 {
     vector<IExtension *>::iterator it;
@@ -507,6 +506,12 @@ bool xPLDevice::WaitRecv(int delay)
         }
     }
     return true;
+}
+#endif
+
+void xPLDevice::SetAnswerAllMsg(bool bAnswerAllMsg)
+{
+    m_bAnswerAllMsg = bAnswerAllMsg;
 }
 
 bool xPLDevice::FilterAllow(const SchemaObject& msg)
@@ -701,6 +706,12 @@ bool xPLDevice::MsgAnswer(SchemaObject& msg)
 	return false;
 }
 
+#ifndef XPLLIB_NOCONF
+void xPLDevice::AddExtension(IExtensionConfig* extensionClass)
+{
+    m_ExtensionConfigClass.push_back(extensionClass);
+}
+
 string xPLDevice::GetConfigFolder()
 {
     string configFolder;
@@ -744,7 +755,10 @@ bool xPLDevice::LoadConfig()
 
     iniFile.SetOptions(iniFile.Comment, "#");
     if(!iniFile.Load(configFileName))
+    {
+        LOG_INFO(m_Log) << "Unable to open config file.";
         return false;
+    }
 
     m_bLoadConfig = true;
 
@@ -774,6 +788,7 @@ bool xPLDevice::SaveConfig()
     iniFile.SaveAs(GetConfigFileName());
     return true;
 }
+#endif
 
 bool xPLDevice::isDevice(const string& deviceName)
 {
