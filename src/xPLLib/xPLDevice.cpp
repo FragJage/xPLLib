@@ -212,22 +212,22 @@ void xPLDevice::SetLogDestination(const std::string& value)
 }
 #endif
 
-void xPLDevice::SetGroups(const std::vector<std::string>& group)
+void xPLDevice::SetGroups(const std::set<std::string>& group)
 {
-    std::vector<std::string>::const_iterator it;
+    std::set<std::string>::const_iterator it;
 
     m_Groups.clear();
     for(it=group.begin(); it!=group.end(); ++it)
-        m_Groups.push_back(*it);
+        m_Groups.insert(*it);
 }
 
-void xPLDevice::SetFilters(const std::vector<std::string>& filter)
+void xPLDevice::SetFilters(const std::set<std::string>& filter)
 {
-    std::vector<std::string>::const_iterator it;
+    std::set<std::string>::const_iterator it;
 
     m_Filters.clear();
     for(it=filter.begin(); it!=filter.end(); ++it)
-        m_Filters.push_back(*it);
+        m_Filters.insert(*it);
 }
 
 void xPLDevice::SetHeartBeat(HeartBeatType type, int interval)
@@ -520,7 +520,8 @@ bool xPLDevice::FilterAllow(const SchemaObject& msg)
     string filter;
     string filterPart;
     string msgType;
-    vector<string>::const_iterator it;
+    Address sourceAddress;
+    set<string>::const_iterator it;
 
 
 	LOG_ENTER;
@@ -546,32 +547,33 @@ bool xPLDevice::FilterAllow(const SchemaObject& msg)
        	// Check the schema class
        	posDeb = posFin+1;
         posFin = filter.find('.', posDeb);
-        filterPart = filter.substr(posDeb, posFin-posDeb+1);
+        filterPart = filter.substr(posDeb, posFin-posDeb);
         if((filterPart!="*")&&(filterPart!=msg.GetClass())) continue;
 
         // Check the schema type
        	posDeb = posFin+1;
         posFin = filter.find('.', posDeb);
-        filterPart = filter.substr(posDeb, posFin-posDeb+1);
+        filterPart = filter.substr(posDeb, posFin-posDeb);
         if((filterPart!="*")&&(filterPart!=msg.GetType())) continue;
 
         // Check the vendor
+        sourceAddress.SetAddress(msg.GetSource());
        	posDeb = posFin+1;
         posFin = filter.find('.', posDeb);
-        filterPart = filter.substr(posDeb, posFin-posDeb+1);
-        if((filterPart!="*")&&(filterPart!=msg.TargetAddress.GetVendor())) continue;
+        filterPart = filter.substr(posDeb, posFin-posDeb);
+        if((filterPart!="*")&&(filterPart!=sourceAddress.GetVendor())) continue;
 
         // Check the device
        	posDeb = posFin+1;
         posFin = filter.find('.', posDeb);
-        filterPart = filter.substr(posDeb, posFin-posDeb+1);
-        if((filterPart!="*")&&(filterPart!=msg.TargetAddress.GetDevice())) continue;
+        filterPart = filter.substr(posDeb, posFin-posDeb);
+        if((filterPart!="*")&&(filterPart!=sourceAddress.GetDevice())) continue;
 
         // Check the instance
        	posDeb = posFin+1;
         posFin = filter.find('.', posDeb);
-        filterPart = filter.substr(posDeb, posFin-posDeb+1);
-        if((filterPart!="*")&&(filterPart!=msg.TargetAddress.GetInstance())) continue;
+        filterPart = filter.substr(posDeb, posFin-posDeb);
+        if((filterPart!="*")&&(filterPart!=sourceAddress.GetInstance())) continue;
 
         LOG_VERBOSE(m_Log) << "One filter match";
         LOG_EXIT_OK;
@@ -586,7 +588,7 @@ bool xPLDevice::FilterAllow(const SchemaObject& msg)
 bool xPLDevice::InGroup(const string& target)
 {
     size_t pos;
-    vector<string>::const_iterator it;
+    set<string>::const_iterator it;
 
 
 	LOG_ENTER;
@@ -612,19 +614,17 @@ bool xPLDevice::InGroup(const string& target)
         return false;
     }
 
-    for(it=m_Groups.begin(); it!=m_Groups.end(); ++it)
+    it = m_Groups.find(target);
+    if(it == m_Groups.end())
     {
-        if(*it==target)
-        {
-            LOG_VERBOSE(m_Log) << "Target match with a group";
-            LOG_EXIT_OK;
-            return true;
-        }
+        LOG_VERBOSE(m_Log) << "Target does not match with a group";
+        LOG_EXIT_OK;
+        return false;
     }
 
-    LOG_VERBOSE(m_Log) << "Target does not match with a group";
+    LOG_VERBOSE(m_Log) << "Target match with a group";
     LOG_EXIT_OK;
-    return false;
+    return true;
 }
 
 bool xPLDevice::MsgForMe(SchemaObject& msg)

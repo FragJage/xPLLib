@@ -120,8 +120,8 @@ class xPLDevice
 
         void SetInstance(const std::string& instance);
         void SetAppName(const std::string& appName, const std::string& appVersion);
-        void SetGroups(const std::vector<std::string>& group);
-        void SetFilters(const std::vector<std::string>& filter);
+        void SetGroups(const std::set<std::string>& group);
+        void SetFilters(const std::set<std::string>& filter);
         void SetHeartBeatInterval(int interval);
         void SetHeartBeatType(HeartBeatType type);
         bool MsgForMe(SchemaObject& msg);
@@ -165,8 +165,8 @@ class xPLDevice
         int m_HBeatInterval;
         std::string m_AppName;
         std::string m_AppVersion;
-        std::vector<std::string> m_Groups;
-        std::vector<std::string> m_Filters;
+        std::set<std::string> m_Groups;
+        std::set<std::string> m_Filters;
 
         std::vector<std::string> m_PreSend;
         SchemaObject *m_HBeatMsg;

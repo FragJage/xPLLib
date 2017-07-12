@@ -14,4 +14,7 @@ public:
     bool SetAppName();
     bool Instance();
     bool HBeatConfig();
+    bool GroupsFeature();
+    bool FiltersFeature();
+    bool WaitRecv();
 };
