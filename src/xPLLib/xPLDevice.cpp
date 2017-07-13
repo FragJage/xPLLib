@@ -112,7 +112,6 @@ void xPLDevice::SetAppName(const string& appName, const string& appVersion)
 void xPLDevice::SetInstance(const string& instance)
 {
     LOG_ENTER;
-
     if(instance==m_Source.GetInstance())
     {
         LOG_VERBOSE(m_Log) << "L'instance n'a pas changé";

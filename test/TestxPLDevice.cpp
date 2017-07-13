@@ -190,15 +190,19 @@ bool TestxPLDevice::WaitRecv()
     xPL::SchemaObject sch;
     string msg;
 
-    msg = hbr.ToMessage("fragxpl-other.default", "fragxpl-test.default");
-    SimpleSockUDP::SetNextRecv(msg);
 
     dev.Open();
+    msg = SimpleSockUDP::GetLastSend(10);       //Pass config.app on start
+
+    msg = hbr.ToMessage("fragxpl-other.default", "fragxpl-test.default");
+    SimpleSockUDP::SetNextRecv(msg);
     dev.WaitRecv(10);
     msg = SimpleSockUDP::GetLastSend(10);
     sch.Parse(msg);
     assert("fragxpl-test.default"==sch.GetSource());
+    assert("fragxpl-other.default"==sch.TargetAddress.ToString());
     assert(xPL::ISchema::stat==sch.GetMsgType());
+
     dev.Close();
     msg = SimpleSockUDP::GetLastSend(10);       //Pass hbeat.end
 

@@ -1,3 +1,4 @@
+#include <iostream>
 /*** LICENCE ***************************************************************************************/
 /*
   xPPLib - Simple class to manage socket communication TCP or UDP

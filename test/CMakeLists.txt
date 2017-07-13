@@ -84,6 +84,7 @@ add_executable(
   ${xPLLib_files}
   main.cpp
   TestxPLDevice.cpp
+  TestxPLDevCfg.cpp
   TestxPLMsg.cpp
 )
 

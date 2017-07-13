@@ -1,6 +1,7 @@
 #include <iostream>
 #include "UnitTest/UnitTest.h"
 #include "TestxPLDevice.h"
+#include "TestxPLDevCfg.h"
 #include "TestxPLMsg.h"
 
 using namespace std;
@@ -14,6 +15,7 @@ int main()
   try
   {
   	unitTest.addTestClass(new TestxPLDevice());
+  	unitTest.addTestClass(new TestxPLDevCfg());
   	unitTest.addTestClass(new TestxPLMsg());
   }
   catch(const exception &e)
