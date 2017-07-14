@@ -67,8 +67,12 @@
 		<Unit filename="dependency/UnitTest/termcolor.h" />
 		<Unit filename="src/xPLLib/Address.cpp" />
 		<Unit filename="src/xPLLib/Address.h" />
+		<Unit filename="src/xPLLib/Extensions/AdvanceConfig.cpp" />
+		<Unit filename="src/xPLLib/Extensions/AdvanceConfig.h" />
 		<Unit filename="src/xPLLib/Extensions/BasicConfig.cpp" />
 		<Unit filename="src/xPLLib/Extensions/BasicConfig.h" />
+		<Unit filename="src/xPLLib/Schemas/SchemaAdvanceConfig.cpp" />
+		<Unit filename="src/xPLLib/Schemas/SchemaAdvanceConfig.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaConfig.cpp" />
 		<Unit filename="src/xPLLib/Schemas/SchemaConfig.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaHbeat.cpp" />
@@ -83,6 +87,8 @@
 		<Unit filename="test/TestxPLDevCfg.h" />
 		<Unit filename="test/TestxPLDevice.cpp" />
 		<Unit filename="test/TestxPLDevice.h" />
+		<Unit filename="test/TestxPLExtAdvConfig.cpp" />
+		<Unit filename="test/TestxPLExtAdvConfig.h" />
 		<Unit filename="test/TestxPLMsg.cpp" />
 		<Unit filename="test/TestxPLMsg.h" />
 		<Unit filename="test/main.cpp" />
