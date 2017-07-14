@@ -85,6 +85,7 @@ add_executable(
   main.cpp
   TestxPLDevice.cpp
   TestxPLDevCfg.cpp
+  TestxPLExtAdvConfig.cpp
   TestxPLMsg.cpp
 )
 
