@@ -1,31 +1,43 @@
 #include "TestxPLMsg.h"
+#include "xPLLib/Schemas/SchemaControl.h"
 
 using namespace std;
 
 TestxPLMsg::TestxPLMsg() : TestClass("xPLMsg", this)
 {
-	//addTest("SetCalcul", &TestCalcul::SetCalcul);
+	addTest("ControlBasic", &TestxPLMsg::ControlBasic);
 }
 
 TestxPLMsg::~TestxPLMsg()
 {
 }
 
-/*
-bool TestxPLMsg::SetCalcul()
+bool TestxPLMsg::ControlBasic()
 {
-    Calcul myCalculSimple;
-    Calcul myCalcul("EvaluateNight", "fragxpl-fictif.default:night", "output", "fragxpl-owfs.default:brightness<10");
+    xPL::SchemaControlBasic scb1;
+    xPL::SchemaControlBasic scb2;
+    xPL::SchemaControlBasic scb3("Ctrl3", xPL::SchemaControlBasic::controlType::flag);
+    xPL::SchemaControlBasic scb4("Ctrl4", xPL::SchemaControlBasic::controlType::slider, "127");
 
-    assert(""==myCalculSimple.m_Name);
-    assert("EvaluateNight"==myCalcul.m_Name);
-    assert("fragxpl-fictif.default:night"==myCalcul.m_CanonicDevice);
-    assert("output"==myCalcul.m_TypeStr);
-    assert("fragxpl-owfs.default:brightness<10"==myCalcul.m_Formula);
-    assert("fragxpl-fictif.default"==myCalcul.m_ModuleName);
-    assert("night"==myCalcul.m_DeviceName);
-    assert(xPL::SchemaControlBasic::output==myCalcul.m_TypeEnum);
+    scb1.SetDeviceName("Ctrl1");
+    scb1.SetDeviceType(xPL::SchemaControlBasic::controlType::balance);
+    scb1.SetCurrent("12");
+
+    scb2.SetDeviceName("Ctrl2");
+    scb2.SetDeviceType("variable");
+    scb2.SetCurrent("24");
+
+    scb3.SetFlag(xPL::SchemaControlBasic::flagSet::clear);
+
+    scb1.Check();
+    scb2.Check();
+    scb3.Check();
+    scb4.Check();
+
+    assert("12"==scb1.GetCurrent());
+    assert("24"==scb2.GetCurrent());
+    assert("clear"==scb3.GetCurrent());
+    assert("127"==scb4.GetCurrent());
 
     return true;
 }
-*/

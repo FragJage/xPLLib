@@ -9,5 +9,5 @@ public:
     TestxPLMsg();
     ~TestxPLMsg();
 
-    //bool SetCalcul();
+    bool ControlBasic();
 };

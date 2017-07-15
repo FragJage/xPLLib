@@ -62,6 +62,8 @@
 		<Unit filename="dependency/SimpleSock/SimpleSockUDP.cpp" />
 		<Unit filename="dependency/SimpleSock/SimpleSockUDP.h" />
 		<Unit filename="dependency/SimpleSock/SimpleSockUDP_Mock.h" />
+		<Unit filename="dependency/StringTools/StringTools.cpp" />
+		<Unit filename="dependency/StringTools/StringTools.h" />
 		<Unit filename="dependency/UnitTest/UnitTest.cpp" />
 		<Unit filename="dependency/UnitTest/UnitTest.h" />
 		<Unit filename="dependency/UnitTest/termcolor.h" />
@@ -77,6 +79,8 @@
 		<Unit filename="src/xPLLib/Schemas/SchemaAdvanceConfig.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaConfig.cpp" />
 		<Unit filename="src/xPLLib/Schemas/SchemaConfig.h" />
+		<Unit filename="src/xPLLib/Schemas/SchemaControl.cpp" />
+		<Unit filename="src/xPLLib/Schemas/SchemaControl.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaHbeat.cpp" />
 		<Unit filename="src/xPLLib/Schemas/SchemaHbeat.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaObject.cpp" />

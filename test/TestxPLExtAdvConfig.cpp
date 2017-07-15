@@ -10,7 +10,11 @@ TestxPLExtAdvConfig::TestxPLExtAdvConfig() : TestClass("AdvanceConfig", this), m
     addTest("Request", &TestxPLExtAdvConfig::Request);
     addTest("RequestSingle", &TestxPLExtAdvConfig::RequestSingle);
     addTest("Delete", &TestxPLExtAdvConfig::Delete);
+    addTest("NoResponse", &TestxPLExtAdvConfig::NoResponse);
+    addTest("AddConfig", &TestxPLExtAdvConfig::AddConfig);
+    addTest("DeleteConfig", &TestxPLExtAdvConfig::DeleteConfig);
 
+	m_xPLDevice.AddExtension(&m_AdvanceConfig);
     m_xPLDevice.Open();
     SimpleSockUDP::GetLastSend(10);       //Pass config.app on start
 }
@@ -25,6 +29,16 @@ bool TestxPLExtAdvConfig::Initialisation()
 {
     m_AdvanceConfig.AddFormat("configname", xPL::AdvanceConfig::ParamType::STRING, xPL::AdvanceConfig::ParamList::NONE);
     m_AdvanceConfig.AddFormat("output", xPL::AdvanceConfig::ParamType::DEVICE, xPL::AdvanceConfig::ParamList::NONE);
+    m_AdvanceConfig.AddFormat("myinteger", xPL::AdvanceConfig::ParamType::INTEGER, xPL::AdvanceConfig::ParamList::NONE);
+    m_AdvanceConfig.AddFormat("myfloat", xPL::AdvanceConfig::ParamType::FLOAT, xPL::AdvanceConfig::ParamList::NONE);
+    m_AdvanceConfig.AddFormat("mybool", xPL::AdvanceConfig::ParamType::BOOLEAN, xPL::AdvanceConfig::ParamList::NONE);
+
+    m_Config1["configname"] = "deviceA";
+    m_Config1["output"] = "fragxpl-other.default:devA";
+    m_Config1["myinteger"] = "1";
+    m_Config2["configname"] = "deviceB";
+    m_Config2["output"] = "fragxpl-other.default:devB";
+    m_Config2["myinteger"] = "2";
 
     return true;
 }
@@ -160,6 +174,86 @@ bool TestxPLExtAdvConfig::Delete()
     sacc2.TargetAddress.SetAddress("fragxpl-test.default");
     sacc2.SetValue("command", "delete");
     m_AdvanceConfig.MsgAnswer(sacc2);
+
+    return true;
+}
+
+bool TestxPLExtAdvConfig::NoResponse()
+{
+    xPL::SchemaObject sch1;
+    string msg;
+
+    m_AdvanceConfig.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetMsgType(xPL::ISchema::cmnd);
+    m_AdvanceConfig.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetClass("advanceconfig");
+    m_AdvanceConfig.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetType("list");
+    m_AdvanceConfig.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetType("current");
+    m_AdvanceConfig.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetValue("command", "request");
+    sch1.SetValue("configname", "zzzzzzz");
+    m_AdvanceConfig.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetType("zzzzzz");
+    m_AdvanceConfig.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    return true;
+}
+
+bool TestxPLExtAdvConfig::AddConfig()
+{
+    map<string, string>* config;
+
+    m_AdvanceConfig.AddConfig(m_Config1);
+    m_AdvanceConfig.AddConfig(m_Config2);
+
+    config = m_AdvanceConfig.GetConfig(0);
+    assert(nullptr!=config);
+    assert("deviceA"==(*config)["configname"]);
+    assert("fragxpl-other.default:devA"==(*config)["output"]);
+    assert("1"==(*config)["myinteger"]);
+
+    config = m_AdvanceConfig.GetConfig("deviceB");
+    assert(nullptr!=config);
+    assert("deviceB"==(*config)["configname"]);
+    assert("fragxpl-other.default:devB"==(*config)["output"]);
+    assert("2"==(*config)["myinteger"]);
+
+    return true;
+}
+
+bool TestxPLExtAdvConfig::DeleteConfig()
+{
+    map<string, string>* config;
+
+    m_AdvanceConfig.DelConfig("deviceB");
+    config = m_AdvanceConfig.GetConfig("deviceB");
+    assert(nullptr==config);
+
+    m_AdvanceConfig.DelConfig(0);
+    config = m_AdvanceConfig.GetConfig(0);
+    assert(nullptr==config);
 
     return true;
 }
