@@ -190,4 +190,5 @@ string SimpleSockUDP::g_MockRecv = "";
 queue<string> SimpleSockUDP::g_MockSend;
 mutex SimpleSockUDP::g_MockRecvMutex;
 mutex SimpleSockUDP::g_MockSendMutex;
+int SimpleSockUDP::g_PortInUse = -1;
 #endif

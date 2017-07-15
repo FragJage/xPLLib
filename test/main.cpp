@@ -3,6 +3,7 @@
 #include "TestxPLDevice.h"
 #include "TestxPLDevCfg.h"
 #include "TestxPLExtAdvConfig.h"
+#include "TestxPLExtSensors.h"
 #include "TestxPLMsg.h"
 
 using namespace std;
@@ -18,6 +19,7 @@ int main()
   	unitTest.addTestClass(new TestxPLDevice());
   	unitTest.addTestClass(new TestxPLDevCfg());
   	unitTest.addTestClass(new TestxPLExtAdvConfig());
+  	unitTest.addTestClass(new TestxPLExtSensors());
   	unitTest.addTestClass(new TestxPLMsg());
   }
   catch(const exception &e)

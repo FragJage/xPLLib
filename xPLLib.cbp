@@ -71,6 +71,8 @@
 		<Unit filename="src/xPLLib/Extensions/AdvanceConfig.h" />
 		<Unit filename="src/xPLLib/Extensions/BasicConfig.cpp" />
 		<Unit filename="src/xPLLib/Extensions/BasicConfig.h" />
+		<Unit filename="src/xPLLib/Extensions/Sensors.cpp" />
+		<Unit filename="src/xPLLib/Extensions/Sensors.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaAdvanceConfig.cpp" />
 		<Unit filename="src/xPLLib/Schemas/SchemaAdvanceConfig.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaConfig.cpp" />
@@ -79,6 +81,8 @@
 		<Unit filename="src/xPLLib/Schemas/SchemaHbeat.h" />
 		<Unit filename="src/xPLLib/Schemas/SchemaObject.cpp" />
 		<Unit filename="src/xPLLib/Schemas/SchemaObject.h" />
+		<Unit filename="src/xPLLib/Schemas/SchemaSensor.cpp" />
+		<Unit filename="src/xPLLib/Schemas/SchemaSensor.h" />
 		<Unit filename="src/xPLLib/xPLDevCfg.cpp" />
 		<Unit filename="src/xPLLib/xPLDevCfg.h" />
 		<Unit filename="src/xPLLib/xPLDevice.cpp" />
@@ -89,6 +93,8 @@
 		<Unit filename="test/TestxPLDevice.h" />
 		<Unit filename="test/TestxPLExtAdvConfig.cpp" />
 		<Unit filename="test/TestxPLExtAdvConfig.h" />
+		<Unit filename="test/TestxPLExtSensors.cpp" />
+		<Unit filename="test/TestxPLExtSensors.h" />
 		<Unit filename="test/TestxPLMsg.cpp" />
 		<Unit filename="test/TestxPLMsg.h" />
 		<Unit filename="test/main.cpp" />

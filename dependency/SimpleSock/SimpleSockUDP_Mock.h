@@ -31,6 +31,7 @@ using namespace std;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+
 class SimpleSockUDP
 {
     public:
@@ -70,6 +71,9 @@ class SimpleSockUDP
         };
         void Open(int port, unsigned long ipAddress)
         {
+            if((g_PortInUse!=-1)&&(g_PortInUse==port))
+                throw  SimpleSock::Exception(0x0025, "SimpleSockUDP_Mock::Listen: bind error");
+
             memset(&m_sockAddress, 0, sizeof(m_sockAddress));
             m_sockAddress.sin_family = AF_INET;
             m_sockAddress.sin_port=htons(port);
@@ -163,6 +167,11 @@ class SimpleSockUDP
             return "127.0.0.1";
         };
 
+        static void SetPortInUse(int port)
+        {
+            g_PortInUse = port;
+        };
+
         static string GetLastSend(int delay)
         {
             string tmp;
@@ -246,51 +255,7 @@ class SimpleSockUDP
         static mutex g_MockSendMutex;
         static bool m_initSocket;
         static bool g_ExceptionOnNextSend;
-};
-
-class SimpleSockUDP::Exception: public exception
-{
-    public:
-        Exception(int number, string const& message) throw()
-        {
-            m_number = number;
-            m_message = message;
-            m_system = 0;
-            SetWhatMsg();
-        };
-        Exception(int number, string const& message, int system) throw()
-        {
-            m_number = number;
-            m_message = message;
-            m_system = system;
-            SetWhatMsg();
-        };
-        ~Exception() throw()
-        {
-        };
-        const char* what() const throw()
-        {
-            return m_whatMsg.c_str();
-        };
-        int GetNumber() const throw()
-        {
-            return m_number;
-        };
-
-    private:
-        void SetWhatMsg()
-        {
-            ostringstream message;
-
-            message << m_message;
-            if(m_system!=0) message << " (system error " << m_system << ")";
-            m_whatMsg = message.str();
-        };
-
-        int m_number;
-        string m_message;
-        int m_system;
-        string m_whatMsg;
+        static int g_PortInUse;
 };
 
 #pragma GCC diagnostic pop

@@ -50,7 +50,6 @@ Sensors::~Sensors()
 
 bool Sensors::MsgAnswer(SchemaObject& msg)
 {
-//cout << "MsgAnswer1" << endl;
     if(msg.GetMsgType() != SchemaObject::cmnd)
     {
         LOG_VERBOSE(m_Log) << "Not a command message.";
@@ -58,7 +57,6 @@ bool Sensors::MsgAnswer(SchemaObject& msg)
         return false;
     }
 
-//cout << "MsgAnswer2" << endl;
     if(msg.GetClass() != "sensor")
     {
         LOG_VERBOSE(m_Log) << "Not a sensor class.";
@@ -66,7 +64,6 @@ bool Sensors::MsgAnswer(SchemaObject& msg)
         return false;
     }
 
-//cout << "MsgAnswer3" << endl;
     if(msg.GetType() != "request")
     {
         LOG_VERBOSE(m_Log) << "Not a request type";
@@ -74,7 +71,6 @@ bool Sensors::MsgAnswer(SchemaObject& msg)
         return false;
     }
 
-//cout << "MsgAnswer4" << endl;
     if(msg.GetValue("request") != "current")
     {
         LOG_VERBOSE(m_Log) << "Not a request of current";
@@ -82,7 +78,6 @@ bool Sensors::MsgAnswer(SchemaObject& msg)
         return false;
     }
 
-//cout << "MsgAnswer5" << endl;
     SchemaObject* pMessage;
     string deviceName;
 

@@ -315,7 +315,7 @@ void xPLDevice::DiscoverTCPPort()
         LOG_EXIT_OK;
         return;
     }
-    catch(const SimpleSockUDP::Exception &e)
+    catch(const SimpleSock::Exception &e)
     {
         if(e.GetNumber() != 0x0025) throw;
         LOG_VERBOSE(m_Log) << "Socket port " << portHub << " in use" ;
@@ -331,7 +331,7 @@ void xPLDevice::DiscoverTCPPort()
             LOG_EXIT_OK;
             return;
         }
-        catch(const SimpleSockUDP::Exception &e)
+        catch(const SimpleSock::Exception &e)
         {
             if(e.GetNumber() != 0x0025) throw;
             LOG_VERBOSE(m_Log) << "Socket port " << portTCP << " in use";

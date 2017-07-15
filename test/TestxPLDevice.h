@@ -17,4 +17,7 @@ public:
     bool GroupsFeature();
     bool FiltersFeature();
     bool WaitRecv();
+    bool LogCoverage();
+    bool TCPPort();
+    bool isDevice();
 };

@@ -11,6 +11,9 @@ TestxPLDevice::TestxPLDevice() : TestClass("xPLDevice", this)
 	addTest("GroupsFeature", &TestxPLDevice::GroupsFeature);
 	addTest("FiltersFeature", &TestxPLDevice::FiltersFeature);
 	addTest("WaitRecv", &TestxPLDevice::WaitRecv);
+	addTest("LogCoverage", &TestxPLDevice::LogCoverage);
+	addTest("TCPPort", &TestxPLDevice::TCPPort);
+	addTest("isDevice", &TestxPLDevice::isDevice);
 }
 
 TestxPLDevice::~TestxPLDevice()
@@ -205,6 +208,63 @@ bool TestxPLDevice::WaitRecv()
 
     dev.Close();
     msg = SimpleSockUDP::GetLastSend(10);       //Pass hbeat.end
+
+    return true;
+}
+
+bool TestxPLDevice::LogCoverage()
+{
+    xPL::xPLDevice dev("fragxpl", "test");
+
+    dev.SetLogFunction("LogCoverage");
+    dev.SetLogDestination("cout");
+    dev.SetLogDestination("clog");
+    dev.SetLogDestination("test.tmp");
+
+    for(int i=1; i<9; i++) dev.SetLogLevel(i);
+
+    return true;
+}
+
+bool TestxPLDevice::TCPPort()
+{
+    xPL::xPLDevice dev("fragxpl", "test");
+
+    dev.SetNetworkInterface("eth0");
+    dev.SetAnswerAllMsg(true);
+
+    dev.Open();
+    SimpleSockUDP::GetLastSend(10);       //Pass config.app on start
+    assert(3865==dev.GetTCPPort());
+    dev.Close();
+    SimpleSockUDP::GetLastSend(10);       //Pass hbeat.end
+
+    SimpleSockUDP::SetPortInUse(3865);
+    try
+    {
+        dev.Open();
+    }
+    catch(const SimpleSock::Exception &e)
+    {
+    }
+
+    SimpleSockUDP::GetLastSend(10);       //Pass config.app on start
+    assert(49152==dev.GetTCPPort());
+
+    dev.Close();
+    SimpleSockUDP::GetLastSend(10);       //Pass hbeat.end
+
+    return true;
+}
+
+bool TestxPLDevice::isDevice()
+{
+    xPL::xPLDevice dev("fragxpl", "test");
+
+    assert(false==dev.isDevice("fragxplother.default:roomtemp"));
+    assert(false==dev.isDevice("fragxpl-otherdefault:roomtemp"));
+    assert(false==dev.isDevice("fragxpl-other.defaultroomtemp"));
+    assert(true==dev.isDevice("fragxpl-other.default:roomtemp"));
 
     return true;
 }
