@@ -276,7 +276,7 @@ map<string, string>* AdvanceConfig::GetConfig(const string& name)
 bool AdvanceConfig::DelConfig(unsigned int nb)
 {
     if(nb>=m_DeviceValues.size()) return false;
-    m_DeviceValues.erase(m_DeviceValues.begin() + nb - 1);
+    m_DeviceValues.erase(m_DeviceValues.begin() + nb);
     return true;
 }
 
