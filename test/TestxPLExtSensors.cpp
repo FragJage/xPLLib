@@ -11,7 +11,7 @@ TestxPLExtSensors::TestxPLExtSensors() : TestClass("Sensors", this), m_xPLDevice
 	addTest("AddSensorMessage1", &TestxPLExtSensors::AddSensorMessage1);
 	addTest("AddSensorMessage2", &TestxPLExtSensors::AddSensorMessage2);
 	addTest("GetMessage", &TestxPLExtSensors::GetMessage);
-	addTest("ModifyMessage", &TestxPLExtSensors::ModifyMessage);
+	//addTest("ModifyMessage", &TestxPLExtSensors::ModifyMessage);
 	addTest("MsgAnswer", &TestxPLExtSensors::MsgAnswer);
 	addTest("RemoveMessage", &TestxPLExtSensors::RemoveMessage);
 	addTest("RemoveAllMessages", &TestxPLExtSensors::RemoveAllMessages);
