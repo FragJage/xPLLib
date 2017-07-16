@@ -169,6 +169,7 @@ bool TestxPLExtSensors::ModifyMessage()
 
     m_Sensors.ModifyMessage("sensorFive", "TEST", "input");
     msg = SimpleSockUDP::GetLastSend(10);
+cout << msg << endl;
     sch.Parse(msg);
 
     assert("sensor"==sch.GetClass());
