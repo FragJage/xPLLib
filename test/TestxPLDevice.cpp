@@ -14,10 +14,15 @@ TestxPLDevice::TestxPLDevice() : TestClass("xPLDevice", this)
 	addTest("LogCoverage", &TestxPLDevice::LogCoverage);
 	addTest("TCPPort", &TestxPLDevice::TCPPort);
 	addTest("isDevice", &TestxPLDevice::isDevice);
+
+    if(remove("test.tmp")==0)
+        cout << termcolor::yellow << "Remove old log file" << endl << termcolor::grey;
 }
 
 TestxPLDevice::~TestxPLDevice()
 {
+    if(remove("test.tmp")!=0)
+        cout << termcolor::red << "Unable to remove log file" << endl << termcolor::grey;
 }
 
 bool TestxPLDevice::Initialisation()

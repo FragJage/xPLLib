@@ -11,7 +11,7 @@ TestxPLExtSensors::TestxPLExtSensors() : TestClass("Sensors", this), m_xPLDevice
 	addTest("AddSensorMessage1", &TestxPLExtSensors::AddSensorMessage1);
 	addTest("AddSensorMessage2", &TestxPLExtSensors::AddSensorMessage2);
 	addTest("GetMessage", &TestxPLExtSensors::GetMessage);
-	//addTest("ModifyMessage", &TestxPLExtSensors::ModifyMessage);
+	addTest("ModifyMessage", &TestxPLExtSensors::ModifyMessage);
 	//addTest("MsgAnswer", &TestxPLExtSensors::MsgAnswer);
 	addTest("RemoveMessage", &TestxPLExtSensors::RemoveMessage);
 	addTest("RemoveAllMessages", &TestxPLExtSensors::RemoveAllMessages);
@@ -169,7 +169,6 @@ bool TestxPLExtSensors::ModifyMessage()
 
     m_Sensors.ModifyMessage("sensorFive", "TEST", "input");
     msg = SimpleSockUDP::GetLastSend(10);
-cout << msg << endl;
     sch.Parse(msg);
 
     assert("sensor"==sch.GetClass());
@@ -191,6 +190,7 @@ bool TestxPLExtSensors::MsgAnswer()
     SimpleSockUDP::SetNextRecv(msg);
     m_xPLDevice.WaitRecv(10);
     msg = SimpleSockUDP::GetLastSend(10);
+cout << msg << endl;
     sch.Parse(msg);
 
     assert("sensor"==sch.GetClass());
