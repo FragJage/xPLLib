@@ -34,7 +34,7 @@ bool TestxPLDevCfg::GetConfigList()
     msg = SimpleSockUDP::GetLastSend(10);
     sch.Parse(msg);
 
-    if(sch.GetClass()=="config")
+    if(sch.GetType()=="app")
     {
         msg = SimpleSockUDP::GetLastSend(10);
         sch.Parse(msg);
