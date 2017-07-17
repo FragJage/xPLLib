@@ -7,6 +7,7 @@ TestxPLDevCfg::TestxPLDevCfg() : TestClass("TestxPLDevCfg", this), m_xPLDevice("
 	addTest("GetConfigList", &TestxPLDevCfg::GetConfigList);
 	addTest("SetConfig", &TestxPLDevCfg::SetConfig);
 	addTest("GetCurrentConfig", &TestxPLDevCfg::GetCurrentConfig);
+	addTest("LoadConfig", &TestxPLDevCfg::LoadConfig);
 
     m_xPLDevice.Open();
     SimpleSockUDP::GetLastSend(10);       //Pass config.app on start
@@ -80,4 +81,10 @@ bool TestxPLDevCfg::GetCurrentConfig()
     assert("xpl-group.livingroom"==sch.GetValue("group", 1));
 
     return true;
+}
+
+bool TestxPLDevCfg::LoadConfig()
+{
+    m_xPLDevice.LoadConfig();
+    return GetCurrentConfig();
 }

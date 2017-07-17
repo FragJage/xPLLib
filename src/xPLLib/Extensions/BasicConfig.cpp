@@ -1,4 +1,3 @@
-#include <iostream>
 /*** LICENCE ***************************************************************************************/
 /*
   xPPLib - Simple class to manage socket communication TCP or UDP
@@ -162,7 +161,6 @@ void BasicConfig::LoadConfig(SimpleIni& iniFile)
     ostringstream name;
     string value;
     vector<ConfigItem*>::const_iterator itConfig;
-
 
     for(itConfig=m_ConfigItems.begin(); itConfig!=m_ConfigItems.end();++itConfig)
     {

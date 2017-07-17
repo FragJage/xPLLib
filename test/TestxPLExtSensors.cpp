@@ -197,7 +197,7 @@ bool TestxPLExtSensors::MsgAnswer()
         msg = SimpleSockUDP::GetLastSend(10);
         sch.Parse(msg);
     }
-cout << msg << endl;
+
     assert("sensor"==sch.GetClass());
     assert("basic"==sch.GetType());
     assert("sensorThree"==sch.GetValue("device"));

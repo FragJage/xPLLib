@@ -1,16 +1,19 @@
 #include "TestxPLDevice.h"
+#include "xPLLib/Address.h"
 
 using namespace std;
 
 TestxPLDevice::TestxPLDevice() : TestClass("xPLDevice", this)
 {
 	addTest("Initialisation", &TestxPLDevice::Initialisation);
+	addTest("InitException", &TestxPLDevice::InitException);
 	addTest("SetAppName", &TestxPLDevice::SetAppName);
 	addTest("Instance", &TestxPLDevice::Instance);
 	addTest("HBeatConfig", &TestxPLDevice::HBeatConfig);
 	addTest("GroupsFeature", &TestxPLDevice::GroupsFeature);
 	addTest("FiltersFeature", &TestxPLDevice::FiltersFeature);
 	addTest("WaitRecv", &TestxPLDevice::WaitRecv);
+	addTest("MsgAnswer", &TestxPLDevice::MsgAnswer);
 	addTest("LogCoverage", &TestxPLDevice::LogCoverage);
 	addTest("TCPPort", &TestxPLDevice::TCPPort);
 	addTest("isDevice", &TestxPLDevice::isDevice);
@@ -59,6 +62,38 @@ bool TestxPLDevice::Initialisation()
     return true;
 }
 
+bool TestxPLDevice::TryInit(string vendor, string device, string instance, int errorNumber)
+{
+    xPL::xPLDevice dev;
+    bool isOK;
+
+
+    dev.SetLogDestination("test.tmp");
+    isOK = false;
+    try
+    {
+        dev.Initialisation(vendor, device, instance);
+    }
+    catch(const xPL::Address::Exception &e)
+    {
+        if(e.GetNumber()==errorNumber) isOK = true;
+    }
+
+    return isOK;
+}
+
+bool TestxPLDevice::InitException()
+{
+    assert(true==TryInit("frag.xpl", "test", "def", 0x0101));
+    assert(true==TryInit("fragxpltoolong", "test", "def", 0x0104));
+    assert(true==TryInit("fragxpl", "test-1", "def", 0x0102));
+    assert(true==TryInit("fragxpl", "testtoolong", "def", 0x0105));
+    assert(true==TryInit("fragxpl", "test", "default.1", 0x0103));
+    assert(true==TryInit("fragxpl", "test", "defaultverytoolong", 0x0106));
+
+    return true;
+}
+
 bool TestxPLDevice::SetAppName()
 {
     string msg;
@@ -77,18 +112,43 @@ bool TestxPLDevice::SetAppName()
     return true;
 }
 
+bool TestxPLDevice::TryInstance(string instance, int errorNumber)
+{
+    xPL::xPLDevice dev;
+    bool isOK;
+
+
+    dev.SetLogDestination("test.tmp");
+    isOK = false;
+    try
+    {
+        dev.SetInstance(instance);
+    }
+    catch(const xPL::Address::Exception &e)
+    {
+        if(e.GetNumber()==errorNumber) isOK = true;
+    }
+
+    return isOK;
+
+}
+
 bool TestxPLDevice::Instance()
 {
     string msg;
     xPL::SchemaObject sch;
-
     xPL::xPLDevice dev("fragxpl", "test");
+
+    assert(true==TryInstance("instance-1", 0x0103));
+    assert(true==TryInstance("verylongdefaultinstance", 0x0106));
+
     dev.SetInstance("MyInstance");
     dev.Open();
     msg = SimpleSockUDP::GetLastSend(10);
     sch.Parse(msg);
     assert("fragxpl-test.MyInstance"==sch.GetSource());
     assert("MyInstance"==dev.GetInstance());
+
     dev.SetInstance("MyInstance");              //Increase code coverage
     assert("MyInstance"==dev.GetInstance());
     dev.Close();
@@ -211,8 +271,46 @@ bool TestxPLDevice::WaitRecv()
     assert("fragxpl-other.default"==sch.TargetAddress.ToString());
     assert(xPL::ISchema::stat==sch.GetMsgType());
 
+    assert(false==dev.WaitRecv(5));
+    SimpleSockUDP::SetNextRecv("malformatedxplmessage");
+    assert(false==dev.WaitRecv(5));
+
     dev.Close();
     msg = SimpleSockUDP::GetLastSend(10);       //Pass hbeat.end
+
+    return true;
+}
+
+bool TestxPLDevice::MsgAnswer()
+{
+    xPL::xPLDevice dev("fragxpl", "test");
+    xPL::SchemaObject sch1;
+    string msg;
+
+    dev.Open();
+    msg = SimpleSockUDP::GetLastSend(10);       //Pass config.app on start
+
+    msg = sch1.ToMessage("fragxpl-other.default", "fragxpl-test.default");
+    SimpleSockUDP::SetNextRecv(msg);
+    dev.WaitRecv(5);
+    msg = SimpleSockUDP::GetLastSend(1);
+    assert(""==msg);
+
+    sch1.SetMsgType(xPL::ISchema::cmnd);
+    sch1.SetClass("hbeat");
+    sch1.SetType("app");
+    msg = sch1.ToMessage("fragxpl-other.default", "fragxpl-test.default");
+    SimpleSockUDP::SetNextRecv(msg);
+    dev.WaitRecv(5);
+    msg = SimpleSockUDP::GetLastSend(1);
+    assert(""==msg);
+
+    sch1.SetType("request");
+    msg = sch1.ToMessage("fragxpl-other.default", "fragxpl-test.default");
+    SimpleSockUDP::SetNextRecv(msg);
+    dev.WaitRecv(5);
+    msg = SimpleSockUDP::GetLastSend(1);
+    assert(""==msg);
 
     return true;
 }
@@ -227,6 +325,8 @@ bool TestxPLDevice::LogCoverage()
     dev.SetLogDestination("test.tmp");
 
     for(int i=1; i<9; i++) dev.SetLogLevel(i);
+
+    dev.SetConfigFileName("config");
 
     return true;
 }

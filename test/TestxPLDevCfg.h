@@ -13,6 +13,7 @@ public:
     bool GetConfigList();
     bool SetConfig();
     bool GetCurrentConfig();
+    bool LoadConfig();
 
 private:
     xPL::xPLDevCfg m_xPLDevice;
