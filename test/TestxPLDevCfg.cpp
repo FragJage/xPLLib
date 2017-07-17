@@ -33,7 +33,7 @@ bool TestxPLDevCfg::GetConfigList()
     m_xPLDevice.WaitRecv(10);
     msg = SimpleSockUDP::GetLastSend(10);
     sch.Parse(msg);
-
+cout << msg << endl;
     assert("config"==sch.GetClass());
     assert("list"==sch.GetType());
     assert("loglevel"==sch.GetValue("reconf", 3));
