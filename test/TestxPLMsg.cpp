@@ -5,6 +5,7 @@ using namespace std;
 
 TestxPLMsg::TestxPLMsg() : TestClass("xPLMsg", this)
 {
+	addTest("SchemaObject", &TestxPLMsg::SchemaObject);
 	addTest("ControlBasic", &TestxPLMsg::ControlBasic);
 	addTest("ControlBasicCheck", &TestxPLMsg::ControlBasicCheck);
 }
@@ -13,6 +14,35 @@ TestxPLMsg::~TestxPLMsg()
 {
 }
 
+bool TestxPLMsg::SchemaObject()
+{
+    xPL::SchemaObject sch;
+    bool isOK;
+
+    assert(1==sch.GetHop());
+
+    sch.SetMsgType("xpl-cmnd");
+    assert(xPL::ISchema::cmnd==sch.GetMsgType());
+
+    sch.SetMsgType("xpl-stat");
+    assert(xPL::ISchema::stat==sch.GetMsgType());
+
+    sch.SetMsgType("xpl-trig");
+    assert(xPL::ISchema::trig==sch.GetMsgType());
+
+    isOK = false;
+    try
+    {
+        sch.SetMsgType("xpl-zzzz");
+    }
+    catch(const xPL::SchemaObject::Exception &e)
+    {
+        if(e.GetNumber()==0x0008) isOK = true;
+    }
+    assert(true==isOK);
+
+    return true;
+}
 bool TestxPLMsg::ControlBasic()
 {
     xPL::SchemaControlBasic scb1;

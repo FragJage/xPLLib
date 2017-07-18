@@ -14,6 +14,8 @@ public:
     bool SetConfig();
     bool GetCurrentConfig();
     bool LoadConfig();
+    bool GetConfigItem();
+    bool RemoveConfig();
 
 private:
     xPL::xPLDevCfg m_xPLDevice;

@@ -9,6 +9,7 @@ public:
     TestxPLMsg();
     ~TestxPLMsg();
 
+    bool SchemaObject();
     bool ControlBasic();
     bool ControlBasicCheck();
 };
