@@ -13,6 +13,7 @@ TestxPLExtSensors::TestxPLExtSensors() : TestClass("Sensors", this), m_xPLDevice
 	addTest("GetMessage", &TestxPLExtSensors::GetMessage);
 	addTest("ModifyMessage", &TestxPLExtSensors::ModifyMessage);
 	addTest("MsgAnswer", &TestxPLExtSensors::MsgAnswer);
+	addTest("NoResponse", &TestxPLExtSensors::NoResponse);
 	addTest("RemoveMessage", &TestxPLExtSensors::RemoveMessage);
 	addTest("RemoveAllMessages", &TestxPLExtSensors::RemoveAllMessages);
 
@@ -179,11 +180,31 @@ bool TestxPLExtSensors::ModifyMessage()
 
     return true;
 }
+
 bool TestxPLExtSensors::MsgAnswer()
 {
     xPL::SchemaSensorRequest ssr;
     xPL::SchemaObject sch;
     string msg;
+
+    msg = ssr.ToMessage("fragxpl-other.default", "fragxpl-test.default");
+    SimpleSockUDP::SetNextRecv(msg);
+    m_xPLDevice.WaitRecv(10);
+
+    for(int i=0; i<6; i++)
+    {
+        msg = SimpleSockUDP::GetLastSend(10);
+        sch.Parse(msg);
+
+        if(sch.GetClass()=="config")
+        {
+            msg = SimpleSockUDP::GetLastSend(10);
+            sch.Parse(msg);
+        }
+
+        assert("sensor"==sch.GetClass());
+        assert("basic"==sch.GetType());
+    }
 
     ssr.AddValue("device", "sensorThree");
     msg = ssr.ToMessage("fragxpl-other.default", "fragxpl-test.default");
@@ -206,6 +227,39 @@ bool TestxPLExtSensors::MsgAnswer()
 
     return true;
 }
+
+bool TestxPLExtSensors::NoResponse()
+{
+    xPL::SchemaObject sch1;
+    string msg;
+
+    m_Sensors.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetMsgType(xPL::ISchema::cmnd);
+    m_Sensors.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetClass("sensor");
+    m_Sensors.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetType("request");
+    m_Sensors.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+
+    sch1.SetValue("request", "current");
+    sch1.SetValue("device", "zzzzzzz");
+    m_Sensors.MsgAnswer(sch1);
+    msg = SimpleSockUDP::GetLastSend(5);
+    assert(""==msg);
+    return true;
+}
+
 bool TestxPLExtSensors::RemoveMessage()
 {
     xPL::SchemaObject* sch;
@@ -214,8 +268,11 @@ bool TestxPLExtSensors::RemoveMessage()
     sch = m_Sensors.GetMessage("sensorFive");
     assert(nullptr == sch);
 
+    assert(false == m_Sensors.RemoveMessage("sensorZZZ"));
+
     return true;
 }
+
 bool TestxPLExtSensors::RemoveAllMessages()
 {
     xPL::SchemaObject* sch;

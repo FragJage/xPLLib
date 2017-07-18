@@ -62,7 +62,7 @@ bool TestxPLDevice::Initialisation()
     return true;
 }
 
-bool TestxPLDevice::TryInit(string vendor, string device, string instance, int errorNumber)
+bool TestxPLDevice::TryInit(const string& vendor, const string& device, const string& instance, int errorNumber)
 {
     xPL::xPLDevice dev;
     bool isOK;
@@ -112,7 +112,7 @@ bool TestxPLDevice::SetAppName()
     return true;
 }
 
-bool TestxPLDevice::TryInstance(string instance, int errorNumber)
+bool TestxPLDevice::TryInstance(const string& instance, int errorNumber)
 {
     xPL::xPLDevice dev;
     bool isOK;

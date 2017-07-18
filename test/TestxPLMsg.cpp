@@ -1,5 +1,4 @@
 #include "TestxPLMsg.h"
-#include "xPLLib/Schemas/SchemaControl.h"
 
 using namespace std;
 
@@ -8,6 +7,8 @@ TestxPLMsg::TestxPLMsg() : TestClass("xPLMsg", this)
 	addTest("SchemaObject", &TestxPLMsg::SchemaObject);
 	addTest("ControlBasic", &TestxPLMsg::ControlBasic);
 	addTest("ControlBasicCheck", &TestxPLMsg::ControlBasicCheck);
+	addTest("ControlBasicThrow", &TestxPLMsg::ControlBasicThrow);
+	addTest("SchemaConfig", &TestxPLMsg::SchemaConfig);
 }
 
 TestxPLMsg::~TestxPLMsg()
@@ -84,8 +85,11 @@ bool TestxPLMsg::ControlBasicCheck()
     xPL::SchemaControlBasic scb;
     scb.SetDeviceName("Ctrl1");
 
-    scb.SetDeviceType(xPL::SchemaControlBasic::controlType::flag);
-    scb.SetFlag(xPL::SchemaControlBasic::flagSet::neutral);
+    scb.SetDeviceType(xPL::SchemaControlBasic::controlType::manual);
+    scb.Check();
+
+    scb.SetDeviceType(xPL::SchemaControlBasic::controlType::infrared);
+    scb.SetCurrent("send");
     scb.Check();
 
     scb.SetDeviceType(xPL::SchemaControlBasic::controlType::infrared);
@@ -169,6 +173,67 @@ bool TestxPLMsg::ControlBasicCheck()
     scb.Check();
     scb.SetCurrent("resume");
     scb.Check();
+
+    return true;
+}
+
+bool TestxPLMsg::TryControlBasic(xPL::SchemaControlBasic::controlType type, const string& value, int errorNumber)
+{
+    xPL::SchemaControlBasic scb;
+    bool isOK;
+
+
+    scb.SetDeviceName("Ctrl1");
+    scb.SetDeviceType(type);
+    scb.SetCurrent(value);
+    isOK = false;
+    try
+    {
+        scb.Check();
+    }
+    catch(const xPL::SchemaControlBasic::Exception &e)
+    {
+        if(e.GetNumber()==errorNumber) isOK = true;
+    }
+
+    return isOK;
+}
+
+bool TestxPLMsg::ControlBasicThrow()
+{
+    xPL::SchemaControlBasic scb;
+    scb.SetDeviceName("Ctrl1");
+
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::unset, "", 0x0101));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::balance, "255", 0x0102));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::flag, "zzz", 0x0103));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::infrared, "zzz", 0x0104));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::input, "zzz", 0x0105));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::macro, "zzz", 0x0106));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::mute, "zzz", 0x0107));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::output, "zzz", 0x0108));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::variable, "zzz", 0x0109));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::periodic, "zzz", 0x010A));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::scheduled, "zzz", 0x0110));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::slider, "-300", 0x0111));
+    assert(true==TryControlBasic(xPL::SchemaControlBasic::controlType::timer, "zzz", 0x0112));
+
+    return true;
+}
+
+bool TestxPLMsg::SchemaConfig()
+{
+    xPL::SchemaConfigEnd sce;
+    assert("config"==sce.GetClass());
+    assert("end"==sce.GetType());
+
+    xPL::SchemaConfigBasic scb;
+    assert("config"==scb.GetClass());
+    assert("basic"==scb.GetType());
+
+    xPL::SchemaConfigApp sca;
+    assert("config"==sca.GetClass());
+    assert("app"==sca.GetType());
 
     return true;
 }

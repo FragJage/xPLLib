@@ -24,6 +24,6 @@ public:
     bool isDevice();
 
 private:
-    bool TryInit(string vendor, string device, string instance, int errorNumber);
-    bool TryInstance(string instance, int errorNumber);
+    bool TryInit(const string& vendor, const string& device, const string& instance, int errorNumber);
+    bool TryInstance(const string& instance, int errorNumber);
 };

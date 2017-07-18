@@ -7,6 +7,7 @@ TestxPLExtAdvConfig::TestxPLExtAdvConfig() : TestClass("AdvanceConfig", this), m
 	addTest("Initialisation", &TestxPLExtAdvConfig::Initialisation);
 	addTest("List", &TestxPLExtAdvConfig::List);
     addTest("Current", &TestxPLExtAdvConfig::Current);
+    addTest("LoadConfig", &TestxPLExtAdvConfig::LoadConfig);
     addTest("Request", &TestxPLExtAdvConfig::Request);
     addTest("RequestSingle", &TestxPLExtAdvConfig::RequestSingle);
     addTest("Delete", &TestxPLExtAdvConfig::Delete);
@@ -81,6 +82,12 @@ bool TestxPLExtAdvConfig::Current()
     m_AdvanceConfig.MsgAnswer(sch2);
 
     return true;
+}
+
+bool TestxPLExtAdvConfig::LoadConfig()
+{
+    m_xPLDevice.LoadConfig();
+    return Current();
 }
 
 bool TestxPLExtAdvConfig::Request()

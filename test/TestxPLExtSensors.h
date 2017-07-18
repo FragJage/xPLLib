@@ -20,6 +20,7 @@ public:
     bool GetMessage();
     bool ModifyMessage();
     bool MsgAnswer();
+    bool NoResponse();
     bool RemoveMessage();
     bool RemoveAllMessages();
 

@@ -14,6 +14,7 @@ public:
     bool Initialisation();
     bool List();
     bool Current();
+    bool LoadConfig();
     bool Request();
     bool RequestSingle();
     bool Delete();

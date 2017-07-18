@@ -31,6 +31,7 @@ bool TestxPLDevCfg::GetConfigList()
     m_xPLDevice.AddBasicConfig("port", xPL::ConfigItem::Option, "1234");
     m_xPLDevice.AddBasicConfig("grp", xPL::ConfigItem::Option, 2);
 
+    sclr.Check();
     msg = sclr.ToMessage("fragxpl-other.default", "fragxpl-test.default");
     SimpleSockUDP::SetNextRecv(msg);
     m_xPLDevice.WaitRecv(10);
@@ -77,6 +78,7 @@ bool TestxPLDevCfg::GetCurrentConfig()
     xPL::SchemaObject sch;
     string msg;
 
+    sccr.Check();
     msg = sccr.ToMessage("fragxpl-other.default", "fragxpl-test.default");
     SimpleSockUDP::SetNextRecv(msg);
     m_xPLDevice.WaitRecv(10);

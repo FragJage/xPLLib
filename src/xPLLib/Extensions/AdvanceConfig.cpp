@@ -197,7 +197,6 @@ void AdvanceConfig::LoadConfig(SimpleIni& iniFile)
     SimpleIni::KeyIterator keyIt;
     map<string, string> keyValuePair;
 
-
     for(sectIt=iniFile.beginSection(); sectIt!=iniFile.endSection(); ++sectIt)
     {
         if(*sectIt=="xPL") continue;
