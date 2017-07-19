@@ -9,6 +9,7 @@ TestxPLMsg::TestxPLMsg() : TestClass("xPLMsg", this)
 	addTest("ControlBasicCheck", &TestxPLMsg::ControlBasicCheck);
 	addTest("ControlBasicThrow", &TestxPLMsg::ControlBasicThrow);
 	addTest("SchemaConfig", &TestxPLMsg::SchemaConfig);
+	addTest("SchemaSensor", &TestxPLMsg::SchemaSensor);
 }
 
 TestxPLMsg::~TestxPLMsg()
@@ -234,6 +235,30 @@ bool TestxPLMsg::SchemaConfig()
     xPL::SchemaConfigApp sca;
     assert("config"==sca.GetClass());
     assert("app"==sca.GetType());
+
+    return true;
+}
+
+bool TestxPLMsg::SchemaSensor()
+{
+    xPL::SchemaSensorBasic ssb("sensor1", xPL::SchemaSensorTypeUtility::count, "13.2", "V");
+    assert("sensor1"==ssb.GetValue("device"));
+    assert("count"==ssb.GetValue("type"));
+    assert(13.2F==ssb.GetCurrent());
+    assert("V"==ssb.GetValue("unit"));
+
+    ssb.SetDevice("sensorA", xPL::SchemaSensorTypeUtility::fan);
+    assert("sensorA"==ssb.GetValue("device"));
+    assert("fan"==ssb.GetValue("type"));
+
+    xPL::SchemaSensorRequest ssr;
+    ssr.SetDeviceName("sensor2");
+    assert("sensor2"==ssr.GetValue("device"));
+    ssr.SetDeviceType(xPL::SchemaSensorTypeUtility::generic);
+    assert("generic"==ssr.GetValue("type"));
+    ssr.SetDevice("sensorB", xPL::SchemaSensorTypeUtility::illuminance);
+    assert("sensorB"==ssr.GetValue("device"));
+    assert("illuminance"==ssr.GetValue("type"));
 
     return true;
 }
