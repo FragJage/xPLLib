@@ -50,6 +50,7 @@ bool TestxPLExtAdvConfig::List()
     xPL::SchemaObject sch;
     string msg;
 
+    aclr.Check();
     aclr.SetSource("fragxpl-other.default");
     aclr.TargetAddress.SetAddress("fragxpl-test.default");
     m_AdvanceConfig.MsgAnswer(aclr);
@@ -96,6 +97,7 @@ bool TestxPLExtAdvConfig::Request()
     xPL::SchemaObject sch;
     string msg;
 
+    sacc.Check();
     sacc.SetSource("fragxpl-other.default");
     sacc.TargetAddress.SetAddress("fragxpl-test.default");
     m_AdvanceConfig.MsgAnswer(sacc);

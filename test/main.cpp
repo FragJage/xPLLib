@@ -5,6 +5,7 @@
 #include "TestxPLExtAdvConfig.h"
 #include "TestxPLExtSensors.h"
 #include "TestxPLMsg.h"
+#include "TestxPLAddress.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ int main()
   	unitTest.addTestClass(new TestxPLExtAdvConfig());
   	unitTest.addTestClass(new TestxPLExtSensors());
   	unitTest.addTestClass(new TestxPLMsg());
+  	unitTest.addTestClass(new TestxPLAddress());
   }
   catch(const exception &e)
   {

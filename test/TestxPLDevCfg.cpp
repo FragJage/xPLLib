@@ -11,6 +11,9 @@ TestxPLDevCfg::TestxPLDevCfg() : TestClass("TestxPLDevCfg", this), m_xPLDevice("
 	addTest("GetConfigItem", &TestxPLDevCfg::GetConfigItem);
 	addTest("RemoveConfig", &TestxPLDevCfg::RemoveConfig);
 
+	xPL::xPLDevCfg dev1;                    //For code coverage
+	xPL::xPLDevCfg dev2("frag1","test1");   //For code coverage
+
     m_xPLDevice.Open();
     SimpleSockUDP::GetLastSend(10);       //Pass config.app on start
 }

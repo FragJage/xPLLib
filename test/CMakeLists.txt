@@ -88,6 +88,7 @@ add_executable(
   TestxPLExtAdvConfig.cpp
   TestxPLMsg.cpp
   TestxPLExtSensors.cpp
+  TestxPLAddress.cpp
 )
 
 #Spécification WIN32

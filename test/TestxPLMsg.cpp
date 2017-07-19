@@ -10,6 +10,7 @@ TestxPLMsg::TestxPLMsg() : TestClass("xPLMsg", this)
 	addTest("ControlBasicThrow", &TestxPLMsg::ControlBasicThrow);
 	addTest("SchemaConfig", &TestxPLMsg::SchemaConfig);
 	addTest("SchemaSensor", &TestxPLMsg::SchemaSensor);
+	addTest("SchemaSensorType", &TestxPLMsg::SchemaSensorType);
 }
 
 TestxPLMsg::~TestxPLMsg()
@@ -259,6 +260,24 @@ bool TestxPLMsg::SchemaSensor()
     ssr.SetDevice("sensorB", xPL::SchemaSensorTypeUtility::illuminance);
     assert("sensorB"==ssr.GetValue("device"));
     assert("illuminance"==ssr.GetValue("type"));
+
+    return true;
+}
+
+bool TestxPLMsg::SchemaSensorType()
+{
+    assert("unset"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::unset));
+    assert("input"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::input));
+    assert("output"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::output));
+    assert("power"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::power));
+    assert("pressure"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::pressure));
+    assert("setpoint"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::setpoint));
+    assert("speed"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::speed));
+    assert("temp"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::temp));
+    assert("uv"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::uv));
+    assert("voltage"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::voltage));
+    assert("volume"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::volume));
+    assert("weight"==xPL::SchemaSensorTypeUtility::ToString(xPL::SchemaSensorTypeUtility::weight));
 
     return true;
 }

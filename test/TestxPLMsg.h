@@ -18,6 +18,7 @@ public:
     bool ControlBasicThrow();
     bool SchemaConfig();
     bool SchemaSensor();
+    bool SchemaSensorType();
 
 private:
     bool TryControlBasic(xPL::SchemaControlBasic::controlType type, const string& value, int errorNumber);
