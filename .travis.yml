@@ -6,8 +6,7 @@ env:
     - COMPILER=g++-4.9
     # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
     #   via the "travis encrypt" command using the project repo's public key
-    - secure: "XXX"
-
+    - secure: "hRnkJsIp+C0iXEdJ57iD2e7/wKRwy1tLUkgVjl1eFUvcuYSewX2vieGPzHS/AMB8jFaLm9vSRUN3RNV5wqZPX2GuWEwecHT2pLukSRxgxPYCrgC41hi16rswNw8Rlz33Yo7neDOeS+7rUgG4WLkH2zeFwOrYVOkIO0kc7G36nR46SEOhIx2qxzG8jdnDd1i2Byl3NDQVlPaWYqTrbGkvn62xlcXXdv85MY5Wm2CW3J6LYLbgYJTBODgt8iUbDB+1/Ws51RrVhytamo8YeBUQFaRDEEZYuVDewuy5ti1M1qjwUlwhCJAxGhgD14ntdWq3Aw+Rgsv/io6LAccY3SDPUBL8EG5XlQIOPaCr8SLuuc47K9eS9120nD1XT2RFq3BYlAbbT8pl6udLrlh4PQjBOyEfSarkif6JVqEbCdFSbuir1F3xtKsQztMiO0v0xX/0W+ai5czJl/Q0acz7FtAQU1VLqb7KI4NkV9dCCMzrb+r4+djw+BKwlJv4pFvVrZAvzIGJneslUJqG653Qf8bxkypMUrVsqBQPD+X21Meo9AHunBpCksnQZWxiWqBV4Pi1bl031mKJ7D75dizCDSRyguiRLEMVrOcBmV+mwmc7x/2roX0fxdOad8dKA+h1q9taLc9AIj6ObDBRe9VMHb7FHuV0Lv7Zzsl3QSoeA5RjZC0="
 addons:
   apt:
     sources: ['ubuntu-toolchain-r-test']

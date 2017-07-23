@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/FragJage/xPLLib.svg?branch=master)](https://travis-ci.org/FragJage/xPLLib)
 [![Coverage Status](https://coveralls.io/repos/github/FragJage/xPLLib/badge.svg?branch=master&bust=0)](https://coveralls.io/github/FragJage/xPLLib?branch=master)
+[![Coverity Scan Build](https://scan.coverity.com/projects/13257/badge.svg)](https://scan.coverity.com/projects/13257)
 # xPLLib
 C++ library for xPL protocol
 
@@ -15,7 +16,7 @@ Quality developpment
  - Test succesful build on travis
  - Launch unit tests on each git push
  - Code coverage control
- - TO DO Coverity Scan analysis
+ - Coverity Scan analysis
 
 Builds
 ======
