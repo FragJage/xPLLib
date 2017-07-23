@@ -81,7 +81,7 @@ bool AdvanceConfig::MsgAnswer(SchemaObject& msg)
         LOG_VERBOSE(m_Log) << "send advanceconfig.list message";
         SchemaAdvanceConfigList advanceConfigList;
         advanceConfigList = ToFormatMessage();
-        m_xPLDevice->SendMessage(&advanceConfigList, msg.GetSource());
+        m_xPLDevice->SendxPLMessage(&advanceConfigList, msg.GetSource());
         LOG_EXIT_OK;
         return true;
     }
@@ -134,7 +134,7 @@ bool AdvanceConfig::MsgAnswer(SchemaObject& msg)
             for(i=0; i<nb; i++)
             {
                 advanceConfigCurrent = ToConfigMessage(i);
-                m_xPLDevice->SendMessage(&advanceConfigCurrent, msg.GetSource());
+                m_xPLDevice->SendxPLMessage(&advanceConfigCurrent, msg.GetSource());
             }
 
             LOG_EXIT_OK;
@@ -150,7 +150,7 @@ bool AdvanceConfig::MsgAnswer(SchemaObject& msg)
         }
 
         LOG_VERBOSE(m_Log) << "send advanceConfigCurrent stat message";
-        m_xPLDevice->SendMessage(&advanceConfigCurrent, msg.GetSource());
+        m_xPLDevice->SendxPLMessage(&advanceConfigCurrent, msg.GetSource());
         LOG_EXIT_OK;
         return true;
     }

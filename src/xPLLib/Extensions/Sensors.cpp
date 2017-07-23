@@ -89,7 +89,7 @@ bool Sensors::MsgAnswer(SchemaObject& msg)
         for(itSensor=m_Messages.begin(); itSensor!=m_Messages.end(); ++itSensor)
         {
             (itSensor->Message)->SetMsgType(ISchema::stat);
-            m_xPLDevice->SendMessage(itSensor->Message, msg.GetSource());
+            m_xPLDevice->SendxPLMessage(itSensor->Message, msg.GetSource());
         }
 
         LOG_EXIT_OK;
@@ -106,7 +106,7 @@ bool Sensors::MsgAnswer(SchemaObject& msg)
 
     LOG_VERBOSE(m_Log) << "send sensor stat message";
     pMessage->SetMsgType(ISchema::stat);
-    m_xPLDevice->SendMessage(pMessage, msg.GetSource());
+    m_xPLDevice->SendxPLMessage(pMessage, msg.GetSource());
     LOG_EXIT_OK;
     return true;
 }
@@ -122,7 +122,7 @@ void Sensors::AddMessage(SchemaObject* pMessage)
     m_Messages.emplace_back(pMessage, false);
 
     pMessage->SetMsgType(ISchema::trig);
-    m_xPLDevice->SendMessage(pMessage, "*");
+    m_xPLDevice->SendxPLMessage(pMessage, "*");
 
     LOG_EXIT_OK;
 }
@@ -137,7 +137,7 @@ void Sensors::AddSensorMessage(string device, SchemaSensorTypeUtility::SensorTyp
     m_Messages.emplace_back(sensorMsg, true);
 
     sensorMsg->SetMsgType(ISchema::trig);
-    m_xPLDevice->SendMessage(sensorMsg, "*");
+    m_xPLDevice->SendxPLMessage(sensorMsg, "*");
 
     LOG_EXIT_OK;
 }
@@ -214,7 +214,7 @@ bool Sensors::ModifyMessage(string device, string value, string type)
     if(type!="") pMessage->SetValue("type", type);  //Utilisé dans xPLFictif::ConfigChange
 
     pMessage->SetMsgType(ISchema::trig);
-    m_xPLDevice->SendMessage(pMessage, "*");
+    m_xPLDevice->SendxPLMessage(pMessage, "*");
 
     LOG_EXIT_OK;
     return true;

@@ -13,7 +13,6 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-std=c++11" />
 					<Add directory="src" />
 				</Compiler>
 				<Linker>
@@ -27,7 +26,6 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-std=c++11" />
 					<Add option="-g" />
 					<Add option="-DDEBUG" />
 					<Add directory="src" />
@@ -36,6 +34,8 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
+			<Add option="-m32" />
 			<Add option="-fexceptions" />
 			<Add option="-DWIN32" />
 			<Add option="-DWIN" />
@@ -44,6 +44,7 @@
 			<Add directory="src" />
 		</Compiler>
 		<Linker>
+			<Add option="-m32" />
 			<Add library="ws2_32" />
 		</Linker>
 		<Unit filename="dependency/Plateforms/Plateforms.cpp" />
@@ -91,6 +92,8 @@
 		<Unit filename="src/xPLLib/xPLDevCfg.h" />
 		<Unit filename="src/xPLLib/xPLDevice.cpp" />
 		<Unit filename="src/xPLLib/xPLDevice.h" />
+		<Unit filename="test/TestxPLAddress.cpp" />
+		<Unit filename="test/TestxPLAddress.h" />
 		<Unit filename="test/TestxPLDevCfg.cpp" />
 		<Unit filename="test/TestxPLDevCfg.h" />
 		<Unit filename="test/TestxPLDevice.cpp" />
@@ -101,7 +104,9 @@
 		<Unit filename="test/TestxPLExtSensors.h" />
 		<Unit filename="test/TestxPLMsg.cpp" />
 		<Unit filename="test/TestxPLMsg.h" />
-		<Unit filename="test/main.cpp" />
+		<Unit filename="test/main.cpp">
+			<Option weight="40" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

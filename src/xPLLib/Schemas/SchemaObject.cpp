@@ -48,7 +48,6 @@ SchemaObject::~SchemaObject()
 	SchemaObject::ClearSchema();
 }
 
-
 void SchemaObject::swap(SchemaObject& other)
 {
     TargetAddress.swap(other.TargetAddress);

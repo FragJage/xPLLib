@@ -1,11 +1,14 @@
+#ifndef __linux__
+//    #include <winsock2.h>       //Make sur winsock2.h is include before windows.h
+#endif
 #include <iostream>
-#include "UnitTest/UnitTest.h"
 #include "TestxPLDevice.h"
 #include "TestxPLDevCfg.h"
 #include "TestxPLExtAdvConfig.h"
 #include "TestxPLExtSensors.h"
 #include "TestxPLMsg.h"
 #include "TestxPLAddress.h"
+#include "UnitTest/UnitTest.h"
 
 using namespace std;
 

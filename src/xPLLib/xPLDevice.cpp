@@ -130,7 +130,7 @@ void xPLDevice::SetInstance(const string& instance)
         LOG_EXIT_KO;
         throw;
     }
-    if(m_SenderSock.isOpen()) SendMessage(m_HBeatMsg, "*");
+    if(m_SenderSock.isOpen()) SendxPLMessage(m_HBeatMsg, "*");
 
     LOG_INFO(m_Log) << "Source : " << m_Source.ToString();
     LOG_EXIT_OK;
@@ -344,7 +344,7 @@ void xPLDevice::DiscoverTCPPort()
     return;
 }
 
-void xPLDevice::SendMessage(ISchema *Schema, const string& target)
+void xPLDevice::SendxPLMessage(ISchema *Schema, const string& target)
 {
     string strMsg;
 
@@ -392,7 +392,7 @@ void xPLDevice::SendHeartBeat()
     if((timeNow-m_LastHBeat>=interval)||(m_LastHBeat==0))
     {
  		m_LastHBeat=timeNow;
-        SendMessage(m_HBeatMsg, "*");
+        SendxPLMessage(m_HBeatMsg, "*");
 	}
 
     //LOG_EXIT_OK;
@@ -404,7 +404,7 @@ void xPLDevice::SendHeartBeatEnd()
 	LOG_ENTER;
 
     hbeatMsg = new SchemaHbeatEnd();
-    SendMessage(hbeatMsg, "*");
+    SendxPLMessage(hbeatMsg, "*");
     delete hbeatMsg;
 
     LOG_EXIT_OK;
@@ -416,7 +416,9 @@ void xPLDevice::Open()
     int nb;
 	LOG_ENTER;
 
+	#ifndef XPLLIB_NOCONF
     if(m_bLoadConfig==false) LoadConfig();
+    #endif
 
     DiscoverTCPPort();
     m_SenderSock.Open(3865);
@@ -446,7 +448,9 @@ void xPLDevice::Close()
     m_SenderSock.Close();
     m_ReceiverSock.Close();
 
+	#ifndef XPLLIB_NOCONF
     m_bLoadConfig = false;
+    #endif
 
     LOG_EXIT_OK;
 }
@@ -454,7 +458,9 @@ void xPLDevice::Close()
 bool xPLDevice::WaitRecv(int delay)
 {
     vector<IExtension *>::iterator it;
+    #ifndef XPLLIB_NOCONF
     vector<IExtensionConfig *>::iterator itConfig;
+    #endif
     bool bCallExtention;
     string xPLRaw;
     SchemaObject xPLparse;
@@ -497,11 +503,13 @@ bool xPLDevice::WaitRecv(int delay)
                 LOG_VERBOSE(m_Log) << "Call extended message answer";
                 (*it)->MsgAnswer(xPLparse);
             }
+            #ifndef XPLLIB_NOCONF
             for(itConfig=m_ExtensionConfigClass.begin(); itConfig!=m_ExtensionConfigClass.end(); ++itConfig)
             {
                 LOG_VERBOSE(m_Log) << "Call extended message answer";
                 (*itConfig)->MsgAnswer(xPLparse);
             }
+            #endif
         }
     }
     return true;
@@ -696,7 +704,7 @@ bool xPLDevice::MsgAnswer(SchemaObject& msg)
             return false;
         }
         LOG_VERBOSE(m_Log) << "send hbeat message";
-        SendMessage(m_HBeatMsg, msg.GetSource());
+        SendxPLMessage(m_HBeatMsg, msg.GetSource());
         LOG_EXIT_OK;
         return true;
     }

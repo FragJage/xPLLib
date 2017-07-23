@@ -21,6 +21,11 @@ Builds
 ======
 You can build this library with Code::Blocks project or CMake (CMakeLists.txt).
 
+How to use
+==========
+See examples in Code::Blocks project.
+
+
 Licence
 =======
 xPLLib is free software : you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

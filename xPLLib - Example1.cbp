@@ -13,20 +13,34 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add option="-std=c++11" />
 					<Add option="-g" />
 					<Add option="-DDEBUG" />
-					<Add directory="src" />
+					<Add option="-DXPLLIB_NOSOCK" />
+					<Add option="-DXPLLIB_NOLOG" />
+					<Add option="-DXPLLIB_NOCONF" />
+					<Add directory="src/xPLLib" />
+					<Add directory="dependency" />
 				</Compiler>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="dependency/StringTools/StringTools.cpp" />
+		<Unit filename="dependency/StringTools/StringTools.h" />
 		<Unit filename="examples/example1.cpp" />
-		<Unit filename="src/SimpleIni.cpp" />
-		<Unit filename="src/SimpleIni.h" />
+		<Unit filename="src/xPLLib/Address.cpp" />
+		<Unit filename="src/xPLLib/Address.h" />
+		<Unit filename="src/xPLLib/Schemas/SchemaControl.cpp" />
+		<Unit filename="src/xPLLib/Schemas/SchemaControl.h" />
+		<Unit filename="src/xPLLib/Schemas/SchemaHbeat.cpp" />
+		<Unit filename="src/xPLLib/Schemas/SchemaHbeat.h" />
+		<Unit filename="src/xPLLib/Schemas/SchemaObject.cpp" />
+		<Unit filename="src/xPLLib/Schemas/SchemaObject.h" />
+		<Unit filename="src/xPLLib/Schemas/SchemaSensor.cpp" />
+		<Unit filename="src/xPLLib/Schemas/SchemaSensor.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

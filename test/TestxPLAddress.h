@@ -1,6 +1,6 @@
 #include <cassert>
-#include "UnitTest/UnitTest.h"
 #include "xPLLib/Schemas/SchemaSensor.h"
+#include "UnitTest/UnitTest.h"
 
 using namespace std;
 

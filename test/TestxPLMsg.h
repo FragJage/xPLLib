@@ -1,8 +1,8 @@
 #include <cassert>
-#include "UnitTest/UnitTest.h"
 #include "xPLLib/Schemas/SchemaControl.h"
 #include "xPLLib/Schemas/SchemaConfig.h"
 #include "xPLLib/Schemas/SchemaSensor.h"
+#include "UnitTest/UnitTest.h"
 
 using namespace std;
 
