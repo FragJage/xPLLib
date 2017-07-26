@@ -448,7 +448,14 @@ void xPLDevice::Close()
 {
 	LOG_ENTER;
 
-    SendHeartBeatEnd();
+    try
+    {
+        SendHeartBeatEnd();
+    }
+    catch(const SchemaObject::Exception &e)
+    {
+    }
+
     m_SenderSock.Close();
     m_ReceiverSock.Close();
 
