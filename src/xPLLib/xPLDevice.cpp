@@ -118,7 +118,7 @@ void xPLDevice::SetInstance(const string& instance)
     LOG_ENTER;
     if(instance==m_Source.GetInstance())
     {
-        LOG_VERBOSE(m_Log) << "L'instance n'a pas changé";
+        LOG_VERBOSE(m_Log) << "The instance has not changed";
         LOG_EXIT_OK;
         return;
     }
