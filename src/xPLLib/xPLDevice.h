@@ -97,6 +97,10 @@ class xPLDevice
     public:
         class Exception;
         class IExtension;
+        #ifdef XPLLIB_NOSOCK
+        class ISockSend;
+        #endif
+
         enum HeartBeatType {HeartBeatBASIC, HeartBeatAPP, ConfigBASIC, ConfigAPP};
 
         /// \brief    Constructor of xPLDevice
@@ -124,15 +128,16 @@ class xPLDevice
         HeartBeatType GetHeartBeatType();
         bool isDevice(const std::string& deviceName);
         void SendxPLMessage(ISchema *Schema, const std::string& target);
+        unsigned short GetTCPPort();
 
-        #ifndef XPLLIB_SOCK
+        #ifndef XPLLIB_NOSOCK
           void SetNetworkInterface(const std::string& networkInterface);
-          unsigned short GetTCPPort();
           void Open();
           void Close();
           bool WaitRecv(int delay);
         #else
-          //void SetSendSockCallback()
+          void SetSendSockCallback(ISockSend *sockSend);
+          void SetRecvSockInfo(const std::string& address, int port);
         #endif
 
         #ifndef XPLLIB_NOLOG
@@ -157,6 +162,12 @@ class xPLDevice
         bool InGroup(const std::string& target);
         bool MsgAnswer(SchemaObject& msg);
         void SetHeartBeat(HeartBeatType type, int interval);
+        void SendHeartBeat();
+        void SendHeartBeatEnd();
+        bool SockIsOpen();
+        void SockSend(const std::string& msg);
+        int SockRecvPort();
+        std::string SockRecvAdr();
 
         Address m_Source;
         int m_HBeatInterval;
@@ -182,13 +193,15 @@ class xPLDevice
           SimpleLog::DefaultFilter m_logFilter;
         #endif
 
-        #ifndef XPLLIB_SOCK
+        #ifndef XPLLIB_NOSOCK
           SimpleSockUDP m_SenderSock;
           SimpleSockUDP m_ReceiverSock;
           std::string m_networkInterface;
           void DiscoverTCPPort();
-          void SendHeartBeat();
-          void SendHeartBeatEnd();
+        #else
+          std::string m_SockRecvAdr;
+          int m_SockRecvPort;
+          ISockSend *m_SockSend;
         #endif
 
         #ifndef XPLLIB_NOCONF
@@ -198,6 +211,15 @@ class xPLDevice
           std::string m_ConfigFile;
         #endif
 };
+
+#ifdef XPLLIB_NOSOCK
+class xPLDevice::ISockSend
+{
+    public:
+        virtual bool IsOpen() = 0;
+        virtual void Send(std::string const& xplmsg) = 0;
+};
+#endif
 
 class xPLDevice::IExtension
 {

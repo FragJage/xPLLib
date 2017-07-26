@@ -18,7 +18,6 @@
     along with xPPLib.  If not, see <http://www.gnu.org/licenses/>.
 */
 /***************************************************************************************************/
-
 #include <iostream>
 #include "xPLDevice.h"
 #include "Schemas/SchemaConfig.h"
@@ -70,6 +69,11 @@ void xPLDevice::Initialisation(const std::string& vendor, const std::string& dev
       m_SimpleLog.SetWriter(&m_logWriter);
     #endif
 
+    #ifdef XPLLIB_NOSOCK
+      m_SockRecvAdr = "";
+      m_SockRecvPort = 0;
+      m_SockSend = nullptr;
+    #endif
     LOG_ENTER;
 
     if(vendor!="")
@@ -119,7 +123,7 @@ void xPLDevice::SetInstance(const string& instance)
         return;
     }
 
-    if(m_SenderSock.isOpen()) SendHeartBeatEnd();
+    if(SockIsOpen()) SendHeartBeatEnd();
     try
     {
         m_Source.SetAddress(m_Source.GetVendor(), m_Source.GetDevice(), instance);
@@ -130,7 +134,7 @@ void xPLDevice::SetInstance(const string& instance)
         LOG_EXIT_KO;
         throw;
     }
-    if(m_SenderSock.isOpen()) SendxPLMessage(m_HBeatMsg, "*");
+    if(SockIsOpen()) SendxPLMessage(m_HBeatMsg, "*");
 
     LOG_INFO(m_Log) << "Source : " << m_Source.ToString();
     LOG_EXIT_OK;
@@ -258,7 +262,7 @@ void xPLDevice::SetHeartBeat(HeartBeatType type, int interval)
             break;
 
         case xPLDevice::ConfigAPP :
-            m_HBeatMsg = new SchemaConfigApp(interval, m_ReceiverSock.GetPort(), m_ReceiverSock.LocalAddress(""));
+            m_HBeatMsg = new SchemaConfigApp(interval, SockRecvPort(), SockRecvAdr());
             break;
 
         case xPLDevice::HeartBeatBASIC :
@@ -266,7 +270,7 @@ void xPLDevice::SetHeartBeat(HeartBeatType type, int interval)
             break;
 
         case xPLDevice::HeartBeatAPP :
-            m_HBeatMsg = new SchemaHbeatApp(interval, m_ReceiverSock.GetPort(), m_ReceiverSock.LocalAddress(""));
+            m_HBeatMsg = new SchemaHbeatApp(interval, SockRecvPort(), SockRecvAdr());
             break;
 
         default :
@@ -285,15 +289,81 @@ void xPLDevice::SetHeartBeat(HeartBeatType type, int interval)
     LOG_EXIT_OK;
 }
 
-#ifndef XPLLIB_SOCK
-void xPLDevice::SetNetworkInterface(const std::string& networkInterface)
+void xPLDevice::SendxPLMessage(ISchema *Schema, const string& target)
 {
-    m_networkInterface = networkInterface;
+    string strMsg;
+
+	LOG_ENTER;
+
+    try
+    {
+        Schema->Check();
+    }
+    catch(const char * errMsg)
+    {
+        LOG_WARNING(m_Log) << errMsg;
+        LOG_EXIT_KO;
+        return;
+    }
+
+    strMsg = Schema->ToMessage(m_Source.ToString(), target);
+
+    if(!SockIsOpen())
+    {
+        LOG_VERBOSE(m_Log) << "Socket not open, message transfered in the cache";
+        m_PreSend.push_back(strMsg);
+        LOG_EXIT_OK;
+        return;
+    }
+
+    LOG_VERBOSE(m_Log) << "Send message : " << strMsg;
+    SockSend(strMsg);
+
+    LOG_EXIT_OK;
+}
+
+void xPLDevice::SendHeartBeat()
+{
+    time_t timeNow;
+    int interval;
+
+	//LOG_ENTER;
+    if((m_HBeatType==xPLDevice::ConfigBASIC)||(m_HBeatType==xPLDevice::ConfigAPP))
+        interval = 3;
+    else
+        interval = m_HBeatInterval*60;
+
+    timeNow = time((time_t*)0);
+    if((timeNow-m_LastHBeat>=interval)||(m_LastHBeat==0))
+    {
+ 		m_LastHBeat=timeNow;
+        SendxPLMessage(m_HBeatMsg, "*");
+	}
+
+    //LOG_EXIT_OK;
+}
+
+void xPLDevice::SendHeartBeatEnd()
+{
+    SchemaObject *hbeatMsg;
+	LOG_ENTER;
+
+    hbeatMsg = new SchemaHbeatEnd();
+    SendxPLMessage(hbeatMsg, "*");
+    delete hbeatMsg;
+
+    LOG_EXIT_OK;
 }
 
 unsigned short xPLDevice::GetTCPPort()
 {
-    return m_ReceiverSock.GetPort();
+    return SockRecvPort();
+}
+
+#ifndef XPLLIB_NOSOCK
+void xPLDevice::SetNetworkInterface(const std::string& networkInterface)
+{
+    m_networkInterface = networkInterface;
 }
 
 void xPLDevice::DiscoverTCPPort()
@@ -344,72 +414,6 @@ void xPLDevice::DiscoverTCPPort()
     return;
 }
 
-void xPLDevice::SendxPLMessage(ISchema *Schema, const string& target)
-{
-    string strMsg;
-
-	LOG_ENTER;
-
-    try
-    {
-        Schema->Check();
-    }
-    catch(const char * errMsg)
-    {
-        LOG_WARNING(m_Log) << errMsg;
-        LOG_EXIT_KO;
-        return;
-    }
-
-    strMsg = Schema->ToMessage(m_Source.ToString(), target);
-
-    if(!m_SenderSock.isOpen())
-    {
-        LOG_VERBOSE(m_Log) << "Socket not open, message transfered in the cache";
-        m_PreSend.push_back(strMsg);
-        LOG_EXIT_OK;
-        return;
-    }
-
-    LOG_VERBOSE(m_Log) << "Send message : " << strMsg;
-    m_SenderSock.Send(strMsg);
-
-    LOG_EXIT_OK;
-}
-
-void xPLDevice::SendHeartBeat()
-{
-    time_t timeNow;
-    int interval;
-
-	//LOG_ENTER;
-    if((m_HBeatType==xPLDevice::ConfigBASIC)||(m_HBeatType==xPLDevice::ConfigAPP))
-        interval = 3;
-    else
-        interval = m_HBeatInterval*60;
-
-    timeNow = time((time_t*)0);
-    if((timeNow-m_LastHBeat>=interval)||(m_LastHBeat==0))
-    {
- 		m_LastHBeat=timeNow;
-        SendxPLMessage(m_HBeatMsg, "*");
-	}
-
-    //LOG_EXIT_OK;
-}
-
-void xPLDevice::SendHeartBeatEnd()
-{
-    SchemaObject *hbeatMsg;
-	LOG_ENTER;
-
-    hbeatMsg = new SchemaHbeatEnd();
-    SendxPLMessage(hbeatMsg, "*");
-    delete hbeatMsg;
-
-    LOG_EXIT_OK;
-}
-
 void xPLDevice::Open()
 {
     vector<string>::iterator it;
@@ -432,7 +436,7 @@ void xPLDevice::Open()
         LOG_VERBOSE(m_Log) << nb << " messages to send.";
 
         for(it=m_PreSend.begin(); it!=m_PreSend.end(); ++it)
-            m_SenderSock.Send(*it);
+            SockSend(*it);
 
         m_PreSend.clear();
     }
@@ -809,6 +813,63 @@ bool xPLDevice::isDevice(const string& deviceName)
     if(pos==string::npos) return false;
 
     return true;
+}
+
+#ifdef XPLLIB_NOSOCK
+void xPLDevice::SetRecvSockInfo(const std::string& address, int port)
+{
+    m_SockRecvAdr = address;
+    m_SockRecvPort = port;
+}
+
+void xPLDevice::SetSendSockCallback(ISockSend *sockSend)
+{
+    m_SockSend = sockSend;
+}
+#endif
+
+bool xPLDevice::SockIsOpen()
+{
+    #ifndef XPLLIB_NOSOCK
+        return m_SenderSock.isOpen();
+    #else
+      if(m_SockSend==nullptr)
+        throw xPLDevice::Exception(0x0203, "xPLDevice::SockIsOpen: No callback for sender socket is defined, use xPLDevice::SetSendSockCallback");
+      return m_SockSend->IsOpen();
+    #endif
+}
+
+void xPLDevice::SockSend(const string& msg)
+{
+    #ifndef XPLLIB_NOSOCK
+        m_SenderSock.Send(msg);
+    #else
+      if(m_SockSend==nullptr)
+        throw xPLDevice::Exception(0x0204, "xPLDevice::SockSend: No callback for sender socket is defined, use xPLDevice::SetSendSockCallback");
+      return m_SockSend->Send(msg);
+    #endif
+}
+
+int xPLDevice::SockRecvPort()
+{
+    #ifndef XPLLIB_NOSOCK
+      return m_ReceiverSock.GetPort();
+    #else
+      if(m_SockRecvPort==0)
+        throw xPLDevice::Exception(0x0205, "xPLDevice::SockRecvPort: No TCP port defined, use xPLDevice::SetRecvSockInfo");
+      return m_SockRecvPort;
+    #endif
+}
+
+string xPLDevice::SockRecvAdr()
+{
+    #ifndef XPLLIB_NOSOCK
+      return m_ReceiverSock.LocalAddress("");
+    #else
+      if(m_SockRecvAdr=="")
+        throw xPLDevice::Exception(0x0206, "xPLDevice::SockRecvAdr: No receive socket address defined, use xPLDevice::SetRecvSockInfo");
+      return m_SockRecvAdr;
+    #endif
 }
 
 xPLDevice::Exception::Exception(int number, string const& message) throw()

@@ -4,5 +4,6 @@
 		<Project filename="xPLLib.cbp" />
 		<Project filename="xPLLib - Example1.cbp" />
 		<Project filename="xPLLib - Example2.cbp" />
+		<Project filename="xPLLib - Example3.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
