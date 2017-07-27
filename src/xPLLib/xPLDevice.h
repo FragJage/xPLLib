@@ -127,6 +127,7 @@ class xPLDevice
         std::string GetInstance();
         HeartBeatType GetHeartBeatType();
         bool isDevice(const std::string& deviceName);
+        bool MsgAnswer(SchemaObject& msg);
         void SendxPLMessage(ISchema *Schema, const std::string& target);
         unsigned short GetTCPPort();
 
@@ -160,7 +161,6 @@ class xPLDevice
     private:
         bool FilterAllow(const SchemaObject& msg);
         bool InGroup(const std::string& target);
-        bool MsgAnswer(SchemaObject& msg);
         void SetHeartBeat(HeartBeatType type, int interval);
         void SendHeartBeat();
         void SendHeartBeatEnd();
