@@ -452,7 +452,7 @@ void xPLDevice::Close()
     {
         SendHeartBeatEnd();
     }
-    catch(const SchemaObject::Exception &e)
+    catch(const exception &e)
     {
     }
 
