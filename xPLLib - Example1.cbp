@@ -26,8 +26,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-std=c++11" />
+			<Add option="-m32" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add option="-m32" />
+		</Linker>
 		<Unit filename="dependency/StringTools/StringTools.cpp" />
 		<Unit filename="dependency/StringTools/StringTools.h" />
 		<Unit filename="examples/example1.cpp" />

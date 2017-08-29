@@ -258,5 +258,48 @@ class SimpleSockUDP
         static int g_PortInUse;
 };
 
+class SimpleSockUDP::Exception: public std::exception
+{
+public:
+    Exception(int number, std::string const& message) throw() : m_number(number), m_message(message), m_system(0), m_whatMsg()
+    {
+        SetWhatMsg();
+    };
+    
+    Exception(int number, std::string const& message, int system) throw() : m_number(number), m_message(message), m_system(system), m_whatMsg()
+    {
+        SetWhatMsg();
+    };
+
+    ~Exception() throw()
+    {
+    };
+    
+    const char* what() const throw()
+    {
+      return m_whatMsg.c_str();
+    };
+
+    int GetNumber() const throw()
+    {
+      return m_number;
+    };
+
+    private:
+        void SetWhatMsg()
+        {
+            ostringstream message;
+        
+            message << m_message;
+            if(m_system!=0) message << " (system error " << m_system << ")";
+            m_whatMsg = message.str();
+        };
+
+        int m_number;
+        std::string m_message;
+        int m_system;
+        std::string m_whatMsg;
+};
+
 #pragma GCC diagnostic pop
 #endif // SIMPLESOCKUDPMOCK_H

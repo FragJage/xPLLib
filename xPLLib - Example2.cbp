@@ -28,8 +28,12 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-m32" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add option="-m32" />
+		</Linker>
 		<Unit filename="dependency/SafeFunctions/SafeFunctions.cpp" />
 		<Unit filename="dependency/SafeFunctions/SafeFunctions.h" />
 		<Unit filename="dependency/SimpleSock/SimpleSock.cpp" />
