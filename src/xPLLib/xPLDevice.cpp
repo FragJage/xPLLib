@@ -322,7 +322,7 @@ void xPLDevice::SendxPLMessage(ISchema *Schema, const string& target)
     LOG_EXIT_OK;
 }
 
-void xPLDevice::SendHeartBeat()
+void xPLDevice::SendHeartBeat(bool force)
 {
     time_t timeNow;
     int interval;
@@ -334,7 +334,7 @@ void xPLDevice::SendHeartBeat()
         interval = m_HBeatInterval*60;
 
     timeNow = time((time_t*)0);
-    if((timeNow-m_LastHBeat>=interval)||(m_LastHBeat==0))
+    if((timeNow-m_LastHBeat>=interval)||(m_LastHBeat==0)||(force==true))
     {
  		m_LastHBeat=timeNow;
         SendxPLMessage(m_HBeatMsg, "*");
@@ -358,6 +358,62 @@ void xPLDevice::SendHeartBeatEnd()
 unsigned short xPLDevice::GetTCPPort()
 {
     return SockRecvPort();
+}
+
+void xPLDevice::Open()
+{
+    vector<string>::iterator it;
+    int nb;
+	LOG_ENTER;
+
+	#ifndef XPLLIB_NOCONF
+    if(m_bLoadConfig==false) LoadConfig();
+    #endif
+
+    #ifndef XPLLIB_NOSOCK
+    DiscoverTCPPort();
+    m_SenderSock.Open(3865);
+    #endif
+
+    if((m_HBeatType==xPLDevice::ConfigAPP)||(m_HBeatType==xPLDevice::HeartBeatAPP)) SetHeartBeat(m_HBeatType, m_HBeatInterval);
+    SendHeartBeat(true);
+
+    nb = m_PreSend.size();
+    if(nb>0)
+    {
+        LOG_VERBOSE(m_Log) << nb << " messages to send.";
+
+        for(it=m_PreSend.begin(); it!=m_PreSend.end(); ++it)
+            SockSend(*it);
+
+        m_PreSend.clear();
+    }
+
+    LOG_EXIT_OK;
+}
+
+void xPLDevice::Close()
+{
+	LOG_ENTER;
+
+    try
+    {
+        SendHeartBeatEnd();
+    }
+    catch(const exception &e)
+    {
+    }
+
+    #ifndef XPLLIB_NOSOCK
+    m_SenderSock.Close();
+    m_ReceiverSock.Close();
+    #endif
+
+	#ifndef XPLLIB_NOCONF
+    m_bLoadConfig = false;
+    #endif
+
+    LOG_EXIT_OK;
 }
 
 #ifndef XPLLIB_NOSOCK
@@ -414,58 +470,6 @@ void xPLDevice::DiscoverTCPPort()
     return;
 }
 
-void xPLDevice::Open()
-{
-    vector<string>::iterator it;
-    int nb;
-	LOG_ENTER;
-
-	#ifndef XPLLIB_NOCONF
-    if(m_bLoadConfig==false) LoadConfig();
-    #endif
-
-    DiscoverTCPPort();
-    m_SenderSock.Open(3865);
-
-    if((m_HBeatType==xPLDevice::ConfigAPP)||(m_HBeatType==xPLDevice::HeartBeatAPP)) SetHeartBeat(m_HBeatType, m_HBeatInterval);
-    SendHeartBeat();
-
-    nb = m_PreSend.size();
-    if(nb>0)
-    {
-        LOG_VERBOSE(m_Log) << nb << " messages to send.";
-
-        for(it=m_PreSend.begin(); it!=m_PreSend.end(); ++it)
-            SockSend(*it);
-
-        m_PreSend.clear();
-    }
-
-    LOG_EXIT_OK;
-}
-
-void xPLDevice::Close()
-{
-	LOG_ENTER;
-
-    try
-    {
-        SendHeartBeatEnd();
-    }
-    catch(const exception &e)
-    {
-    }
-
-    m_SenderSock.Close();
-    m_ReceiverSock.Close();
-
-	#ifndef XPLLIB_NOCONF
-    m_bLoadConfig = false;
-    #endif
-
-    LOG_EXIT_OK;
-}
-
 bool xPLDevice::WaitRecv(int delay)
 {
     vector<IExtension *>::iterator it;
@@ -477,7 +481,7 @@ bool xPLDevice::WaitRecv(int delay)
     SchemaObject xPLparse;
 
 
-    SendHeartBeat();
+    SendHeartBeat(false);
 
     if(!m_ReceiverSock.WaitRecv(delay))
     {

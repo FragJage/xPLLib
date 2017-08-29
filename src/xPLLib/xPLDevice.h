@@ -130,11 +130,12 @@ class xPLDevice
         bool MsgAnswer(SchemaObject& msg);
         void SendxPLMessage(ISchema *Schema, const std::string& target);
         unsigned short GetTCPPort();
+        void Open();
+        void Close();
+        void SendHeartBeat(bool force);
 
         #ifndef XPLLIB_NOSOCK
           void SetNetworkInterface(const std::string& networkInterface);
-          void Open();
-          void Close();
           bool WaitRecv(int delay);
         #else
           void SetSendSockCallback(ISockSend *sockSend);
@@ -162,7 +163,6 @@ class xPLDevice
         bool FilterAllow(const SchemaObject& msg);
         bool InGroup(const std::string& target);
         void SetHeartBeat(HeartBeatType type, int interval);
-        void SendHeartBeat();
         void SendHeartBeatEnd();
         bool SockIsOpen();
         void SockSend(const std::string& msg);
